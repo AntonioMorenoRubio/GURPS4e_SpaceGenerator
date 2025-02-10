@@ -4,7 +4,7 @@ public class DiceRoller
 {
     private Random _random = new();
 
-    public DiceRoller() {}
+    public DiceRoller() { }
 
     public DiceRoller(int seed)
     {
