@@ -1,5 +1,9 @@
 # GURPS4e_SpaceGenerator
 
+![Build Status](https://img.shields.io/github/actions/workflow/status/AntonioMorenoRubio/GURPS4e_SpaceGenerator/dotnet.yml)
+![Codecov](https://img.shields.io/codecov/c/github/AntonioMorenoRubio/GURPS4e_SpaceGenerator)
+![License](https://img.shields.io/github/license/AntonioMorenoRubio/GURPS4e_SpaceGenerator)
+
 ## Spanish
 Un generador de sistemas estelares basado en GURPS Space 4.ª edición escrito en C#.
 
