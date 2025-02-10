@@ -42,7 +42,7 @@ jobs:
       run: |
         COVERAGE_FILE=$(ls -t GeneratorLibrary.Tests/TestResults/*/coverage.cobertura.xml | head -n 1)
         echo "Coverage file found: $COVERAGE_FILE"
-        echo "::set-output name=coverage_file::$COVERAGE_FILE"
+        echo "coverage_file=$COVERAGE_FILE" >> "$GITHUB_OUTPUT"
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
