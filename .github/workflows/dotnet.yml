@@ -31,5 +31,21 @@ jobs:
     - name: Build project
       run: dotnet build --configuration Release --no-restore
 
-    - name: Run tests
-      run: dotnet test --no-restore --verbosity normal
+    - name: Install coverlet.console
+      run: dotnet tool install --global coverlet.console
+
+    - name: Run tests with coverage
+      run: dotnet test --collect:"XPlat Code Coverage"
+
+    - name: Find the most recent coverage file
+      id: find_coverage_file
+      run: |
+        COVERAGE_FILE=$(ls -t GeneratorLibrary.Tests/TestResults/*/coverage.cobertura.xml | head -n 1)
+        echo "Coverage file found: $COVERAGE_FILE"
+        echo "::set-output name=coverage_file::$COVERAGE_FILE"
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        files: ${{ steps.find_coverage_file.outputs.coverage_file }}
+        token: ${{ secrets.CODECOV_TOKEN }}
