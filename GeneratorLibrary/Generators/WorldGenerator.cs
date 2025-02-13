@@ -27,9 +27,6 @@ namespace GeneratorLibrary.Generators
             (WorldSize size, WorldSubType subType) = WorldTypeTables.GenerateWorldType(overallType, roll2);
             world.Type = new WorldType(size, subType);
 
-            //STEP 3: Atmosphere
-            world.Atmosphere = new Atmosphere();
-
             return world;
         }
     }
