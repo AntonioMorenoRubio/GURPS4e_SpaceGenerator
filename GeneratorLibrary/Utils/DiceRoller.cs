@@ -2,9 +2,14 @@
 
 public class DiceRoller
 {
-    private Random _random = new();
+    private static readonly Lazy<DiceRoller> _instance = new(() => new DiceRoller());
+    private readonly Random _random;
+    public static DiceRoller Instance => _instance.Value;
 
-    public DiceRoller() { }
+    private DiceRoller()
+    {
+        _random = new Random();
+    }
 
     public DiceRoller(int seed)
     {

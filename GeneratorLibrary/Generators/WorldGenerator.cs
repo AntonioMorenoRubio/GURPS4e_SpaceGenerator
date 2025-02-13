@@ -5,7 +5,7 @@ namespace GeneratorLibrary.Generators
 {
     public class WorldGenerator
     {
-        private readonly DiceRoller _diceRoller = new();
+        private readonly DiceRoller _diceRoller = DiceRoller.Instance;
 
         public WorldGenerator() { }
 
@@ -26,6 +26,9 @@ namespace GeneratorLibrary.Generators
             string overallType = WorldTypeTables.GetOverallType(roll1);
             (WorldSize size, WorldSubType subType) = WorldTypeTables.GenerateWorldType(overallType, roll2);
             world.Type = new WorldType(size, subType);
+
+            //STEP 3: Atmosphere
+            world.Atmosphere = new Atmosphere();
 
             return world;
         }

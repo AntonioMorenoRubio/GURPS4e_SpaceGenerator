@@ -2,17 +2,23 @@
 
 public class DiceRollerTests
 {
-    [Fact]
-    public void Roll_Default3d6_ShouldReturnValueBetween3And18()
+    [Theory]
+    [InlineData(10)]
+    [InlineData(100)]
+    [InlineData(1000)]
+    public void Roll_Default3d6_ShouldReturnValueBetween3And18_MultipleTimes(int rolls)
     {
         // Arrange
-        DiceRoller roller = new();
+        DiceRoller roller = DiceRoller.Instance;
 
-        // Act
-        var result = roller.Roll();
+        for (int i = 0; i < rolls; i++)
+        {
+            // Act
+            var result = roller.Roll();
 
-        // Assert
-        Assert.InRange(result, 3, 18);
+            // Assert
+            Assert.InRange(result, 3, 18);
+        }
     }
 
     [Theory]
@@ -21,7 +27,7 @@ public class DiceRollerTests
     public void Roll_MultipleTimes_ShouldReturnDifferentValues(int repetitions)
     {
         // Arrange
-        DiceRoller roller = new();
+        DiceRoller roller = DiceRoller.Instance;
         List<int> results = new();
 
         // Act
@@ -44,7 +50,7 @@ public class DiceRollerTests
     public void Roll_Nd6_ShouldReturnValueWithinValidRange(int numberOfDice)
     {
         // Arrange
-        DiceRoller roller = new();
+        DiceRoller roller = DiceRoller.Instance;
 
         // Act
         var result = roller.Roll(numberOfDice);
@@ -69,7 +75,7 @@ public class DiceRollerTests
     public void Roll_Nd6_WithModifier_ShouldReturnCorrectRange(int numberOfDice, params int[] modifier)
     {
         // Arrange
-        DiceRoller roller = new();
+        DiceRoller roller = DiceRoller.Instance;
 
         // Act
         var result = roller.Roll(numberOfDice, modifier);
@@ -88,15 +94,19 @@ public class DiceRollerTests
     public void Roll_WithFixedSeed_ShouldBeDeterministic(int seed)
     {
         // Arrange
-        DiceRoller roller1 = new(seed);
-        DiceRoller roller2 = new(seed);
+        DiceRoller roller;
+        int[] results = new int[2];
 
         // Act
-        var result1 = roller1.Roll();
-        var result2 = roller2.Roll();
+        for (int i = 0; i <= 1; i++)
+        {
+            roller = new DiceRoller(seed);
+            results[i] = roller.Roll();
+        }
+
 
         // Assert
-        Assert.Equal(result1, result2);
+        Assert.Equal(results[0], results[1]);
     }
 
     [Theory]
@@ -109,7 +119,7 @@ public class DiceRollerTests
     public void Roll_InvalidNumberOfDice_ShouldThrowArgumentException(int numberOfDice)
     {
         // Arrange
-        DiceRoller roller = new();
+        DiceRoller roller = DiceRoller.Instance;
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() => roller.Roll(numberOfDice));
