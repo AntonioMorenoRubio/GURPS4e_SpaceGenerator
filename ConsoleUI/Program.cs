@@ -1,4 +1,5 @@
 ﻿using GeneratorLibrary.Generators;
+using GeneratorLibrary.Models;
 
 WorldGenerator worldGenerator = new();
 
@@ -6,13 +7,21 @@ Console.WriteLine("Welcome to the World Generator!");
 Console.WriteLine("-----------------------------");
 Console.WriteLine("Generating world...");
 
-var world = worldGenerator.GenerateWorld();
+List<World> worlds = new();
 
-Console.WriteLine("World generated!");
+for (int i = 0; i < 1000; i++)
+{
+    worlds.Add(worldGenerator.GenerateWorld());
+}
+
+Console.WriteLine("Worlds generated!");
 Console.WriteLine();
 
-Console.WriteLine(world.ToString());
+foreach (World w in worlds)
+{
+    Console.WriteLine(w.ToString());
+    Console.WriteLine();
+    Console.WriteLine("-----------------------------");
+}
 
-Console.WriteLine();
-Console.WriteLine("-----------------------------");
 Console.WriteLine("Press any key to exit...");

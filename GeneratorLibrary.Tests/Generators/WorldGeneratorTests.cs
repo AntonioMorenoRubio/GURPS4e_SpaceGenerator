@@ -48,6 +48,20 @@ public class WorldGeneratorTests
     }
 
     [Fact]
+    public void GenerateWorld_ShouldReturnWorldWithAtmosphere()
+    {
+        // Arrange
+        var generator = new WorldGenerator();
+
+        // Act
+        var world = generator.GenerateWorld();
+
+        // Assert
+        Assert.NotNull(world.Type);
+        Assert.IsType<Atmosphere>(world.Atmosphere);
+    }
+
+    [Fact]
     public void GenerateWorld_ShouldBeDeterministic()
     {
         // Arrange
