@@ -1,7 +1,7 @@
 using GeneratorLibrary.Models;
 using GeneratorLibrary.Tables;
 
-namespace GeneratorLibrary.Tests
+namespace GeneratorLibrary.Tests.Generators.Tables
 {
     public class WorldTypeTablesTests
     {

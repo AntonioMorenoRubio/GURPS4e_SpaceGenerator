@@ -2,7 +2,7 @@
 using GeneratorLibrary.Models;
 using GeneratorLibrary.Tests.Utils;
 
-namespace GeneratorLibrary.Tests
+namespace GeneratorLibrary.Tests.Generators.Tables
 {
     public class AtmosphereTablesTests
     {
