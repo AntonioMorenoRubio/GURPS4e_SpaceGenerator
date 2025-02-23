@@ -31,9 +31,12 @@ namespace GeneratorLibrary.Generators
             world.Type = new WorldType(size, subType);
 
             //STEP 3: Generate Atmosphere
-            Atmosphere atmosphere = new();
-            atmosphere.Mass = AtmosphereTables.GenerateMass(world.Type.Size, world.Type.SubType);
-            atmosphere.Composition = AtmosphereTables.GetComposition(world.Type.Size, world.Type.SubType);
+            Atmosphere atmosphere = new()
+            {
+                Mass = AtmosphereTables.GenerateMass(world.Type.Size, world.Type.SubType),
+                Composition = AtmosphereTables.GetComposition(world.Type.Size, world.Type.SubType)
+            };
+
             roll1 = _diceRoller.Roll();
             atmosphere.Characteristics = AtmosphereTables.GenerateCharacteristics(world.Type.Size, world.Type.SubType, roll1);
 
@@ -52,12 +55,24 @@ namespace GeneratorLibrary.Generators
             world.Atmosphere = atmosphere;
 
             //STEP 4: Hydrographic Coverage
-            HydrographicCoverage hydrographicCoverage = new HydrographicCoverage();
-
-            hydrographicCoverage.Coverage = HydrographicCoverageTables.GenerateHydrographicCoverage(world.Type.Size, world.Type.SubType);
-            hydrographicCoverage.Composition = HydrographicCoverageTables.GetHydrographicComposition(world.Type.Size, world.Type.SubType);
+            HydrographicCoverage hydrographicCoverage = new()
+            {
+                Coverage = HydrographicCoverageTables.GenerateHydrographicCoverage(world.Type.Size, world.Type.SubType),
+                Composition = HydrographicCoverageTables.GetHydrographicComposition(world.Type.Size, world.Type.SubType)
+            };
 
             world.HydrographicCoverage = hydrographicCoverage;
+
+            //STEP 5: Climate
+            Climate climate = new()
+            {
+                BlackBodyCorrection = Math.Round(ClimateTables.GenerateBlackbodyCorrection(world.Type.Size, world.Type.SubType, world.Atmosphere.Mass, world.HydrographicCoverage.Coverage), 4),
+                Kelvin = Math.Round(ClimateTables.GenerateAverageSurfaceTemperatureInKelvinsByWorldType(world.Type.Size, world.Type.SubType), 0)
+            };
+            climate.ClimateType = ClimateTables.GetClimateTypeBasedOnKelvinTemperature(climate.Kelvin);
+            climate.BlackBodyTemperature = Math.Round(climate.Kelvin / climate.BlackBodyCorrection, 2);
+
+            world.Climate = climate;
 
             return world;
         }

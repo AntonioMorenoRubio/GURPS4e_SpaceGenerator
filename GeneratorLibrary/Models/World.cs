@@ -7,6 +7,7 @@ namespace GeneratorLibrary.Models
         public WorldType? Type { get; set; }
         public Atmosphere? Atmosphere { get; set; }
         public HydrographicCoverage? HydrographicCoverage { get; set; }
+        public Climate? Climate { get; set; }
 
         public World() { }
 
@@ -66,7 +67,14 @@ namespace GeneratorLibrary.Models
                         sb.Append(", ");
                 }
             }
+            sb.AppendLine();
 
+            //STEP 5: Climate
+            sb.AppendLine("Climate:");
+            sb.AppendLine($"Original Average Surface Temperature: {Climate?.Kelvin}K, {Climate?.Celsius}ºC, {Climate?.Farenheit}ºF.");
+            sb.AppendLine($"Climate Type: {Climate?.ClimateType}");
+            sb.AppendLine($"Black body Correction: {Climate?.BlackBodyCorrection}");
+            sb.AppendLine($"Black body Temperature: {Climate?.BlackBodyTemperature}K");
 
             return sb.ToString();
         }
