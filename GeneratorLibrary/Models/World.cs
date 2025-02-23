@@ -52,6 +52,9 @@ namespace GeneratorLibrary.Models
 
                 if (Atmosphere.MarginalAtmosphere is not null)
                     sb.AppendLine($"Marginal Atmosphere: {Atmosphere.MarginalAtmosphere}");
+
+                sb.AppendLine($"Pressure: {Atmosphere.Pressure} atm.");
+                sb.AppendLine($"Pressure Category: {Atmosphere.PressureCategory}.");
             }
 
             //STEP 4: Hydrographic Coverage

@@ -86,8 +86,20 @@ namespace GeneratorLibrary.Generators
                 characteristics.SurfaceGravity = Math.Round(CharacteristicsTables.GenerateWorldSurfaceGravity(characteristics.Diameter, characteristics.Density), 2);
                 characteristics.Mass = Math.Round(characteristics.Density * Math.Pow(characteristics.Diameter, 3), 2);
 
-                world.Characteristics = characteristics;
+                world.Characteristics = characteristics; 
             }
+
+            //Atmospheric Pressure that could not be determined without Surface Gravity
+            if (world.Characteristics is null)
+                world.Atmosphere.Pressure = Math.Round(
+                    AtmosphereTables.GenerateAtmosphericPressure(world.Type.Size, world.Type.SubType, world.Atmosphere.Mass, 0),
+                    2);
+            else
+                world.Atmosphere.Pressure = Math.Round(
+                    AtmosphereTables.GenerateAtmosphericPressure(world.Type.Size, world.Type.SubType, world.Atmosphere.Mass, world.Characteristics.SurfaceGravity),
+                    2);
+
+            world.Atmosphere.PressureCategory = AtmosphereTables.GetPressureCategory(world.Atmosphere.Pressure);
 
             return world;
         }

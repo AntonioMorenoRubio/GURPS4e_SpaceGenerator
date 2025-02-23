@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GeneratorLibrary.Models
+﻿namespace GeneratorLibrary.Models
 {
     public record Atmosphere
     {
@@ -12,6 +6,8 @@ namespace GeneratorLibrary.Models
         public List<string>? Composition { get; set; }
         public List<AtmosphereCharacteristic>? Characteristics { get; set; }
         public MarginalAtmosphere? MarginalAtmosphere { get; set; }
+        public double Pressure { get; set; }
+        public PressureCategory? PressureCategory { get; set; }
     }
 
     public enum AtmosphereCharacteristic
@@ -36,5 +32,17 @@ namespace GeneratorLibrary.Models
         HighCarbonDioxide,
         HighOxygen,
         InertGases
+    }
+
+    public enum PressureCategory
+    {
+        None,
+        Trace,
+        VeryThin,
+        Thin,
+        Standard,
+        Dense,
+        VeryDense,
+        Superdense
     }
 }

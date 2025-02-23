@@ -6,8 +6,8 @@ namespace GeneratorLibrary.Generators.Tables
 {
     public static class AtmosphereTables
     {
-        private static readonly HashSet<(WorldSize, WorldSubType)> _NoAtmosphereWorlds = new HashSet<(WorldSize, WorldSubType)>
-        {
+        private static readonly HashSet<(WorldSize, WorldSubType)> _NoAtmosphereWorlds =
+        [
             (WorldSize.Special, WorldSubType.AsteroidBelt),
             (WorldSize.Tiny, WorldSubType.Ice),
             (WorldSize.Tiny, WorldSubType.Rock),
@@ -17,7 +17,7 @@ namespace GeneratorLibrary.Generators.Tables
             (WorldSize.Standard, WorldSubType.Hadean),
             (WorldSize.Standard, WorldSubType.Chthonian),
             (WorldSize.Large, WorldSubType.Chthonian)
-        };
+        ];
 
         private static readonly Dictionary<(WorldSize, WorldSubType), List<string>> _compositionMap = new()
         {
@@ -35,7 +35,7 @@ namespace GeneratorLibrary.Generators.Tables
             { (WorldSize.Special, WorldSubType.GasGiant), new() { "Hydrogen", "Helium" } }
         };
 
-        private static readonly Dictionary<(WorldSize, WorldSubType), List<AtmosphereCharacteristic>> _fixedCharacteristics = new Dictionary<(WorldSize, WorldSubType), List<AtmosphereCharacteristic>>
+        private static readonly Dictionary<(WorldSize, WorldSubType), List<AtmosphereCharacteristic>> _fixedCharacteristics = new()
         {
             { (WorldSize.Standard, WorldSubType.Ammonia), new() {
                 AtmosphereCharacteristic.Suffocating, AtmosphereCharacteristic.LethallyToxic, AtmosphereCharacteristic.Corrosive }
@@ -148,7 +148,7 @@ namespace GeneratorLibrary.Generators.Tables
                     newAtmosphere.Characteristics.Add(AtmosphereCharacteristic.MildlyToxic);
                     break;
                 case MarginalAtmosphere.SulphurCompounds:
-                    newAtmosphere.Composition.AddRange(new[] { "Hydrogen Sulfide", "Sulfur Dioxide", "Sulfur Trioxide" });
+                    newAtmosphere.Composition.AddRange(["Hydrogen Sulfide", "Sulfur Dioxide", "Sulfur Trioxide"]);
                     newAtmosphere.Characteristics.Add(AtmosphereCharacteristic.MildlyToxic);
                     break;
                 case MarginalAtmosphere.OrganicToxins:
@@ -163,6 +163,62 @@ namespace GeneratorLibrary.Generators.Tables
             return newAtmosphere;
         }
 
+        public static double GenerateAtmosphericPressure(WorldSize size, WorldSubType subType, double atmosphereMass, double surfaceGravity)
+        {
+            // Mundos sin atmósfera (Vacuum)
+            if ((size, subType) is
+                (WorldSize.Special, WorldSubType.AsteroidBelt) or
+                (WorldSize.Tiny, WorldSubType.Ice) or
+                (WorldSize.Tiny, WorldSubType.Rock) or
+                (WorldSize.Tiny, WorldSubType.Sulfur) or
+                (WorldSize.Small, WorldSubType.Hadean) or
+                (WorldSize.Standard, WorldSubType.Hadean))
+            {
+                return 0.0; // Vacuum
+            }
 
+            // Mundos con atmósfera traza (Trace)
+            if ((size, subType) is
+                (WorldSize.Small, WorldSubType.Rock) or
+                (WorldSize.Standard, WorldSubType.Chthonian) or
+                (WorldSize.Large, WorldSubType.Chthonian))
+            {
+                return 0.01; // Trace atmosphere
+            }
+
+            // Obtener factor de presión según la tabla
+            double pressureFactor = (size, subType) switch
+            {
+                (WorldSize.Small, WorldSubType.Ice) => 10.0,
+                (WorldSize.Standard, WorldSubType.Ammonia) or
+                (WorldSize.Standard, WorldSubType.Ice) or
+                (WorldSize.Standard, WorldSubType.Ocean) or
+                (WorldSize.Standard, WorldSubType.Garden) => 1.0,
+                (WorldSize.Standard, WorldSubType.Greenhouse) => 100.0,
+                (WorldSize.Large, WorldSubType.Ammonia) or
+                (WorldSize.Large, WorldSubType.Ice) or
+                (WorldSize.Large, WorldSubType.Ocean) or
+                (WorldSize.Large, WorldSubType.Garden) => 5.0,
+                (WorldSize.Large, WorldSubType.Greenhouse) => 500.0,
+                _ => throw new ArgumentOutOfRangeException(nameof(size), "Invalid world type for atmospheric pressure.")
+            };
+
+            // Calcular presión atmosférica
+            double pressure = atmosphereMass * pressureFactor * surfaceGravity;
+
+            return pressure;
+        }
+
+        public static PressureCategory GetPressureCategory(double pressure) => pressure switch
+        {
+            < 0.01f => PressureCategory.Trace,
+            >= 0.01f and <= 0.5f => PressureCategory.VeryThin,
+            > 0.5f and <= 0.8f => PressureCategory.Thin,
+            > 0.8f and <= 1.2f => PressureCategory.Standard,
+            > 1.2f and <= 1.5f => PressureCategory.Dense,
+            > 1.5f and <= 10f => PressureCategory.VeryDense,
+            > 10f => PressureCategory.Superdense,
+            _ => PressureCategory.None
+        };
     }
 }
