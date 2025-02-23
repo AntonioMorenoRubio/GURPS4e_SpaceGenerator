@@ -336,5 +336,38 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             Assert.Equal(expectedCharacteristics, result?.Characteristics);
         }
 
+        [Theory]
+        [InlineData(WorldSize.Special, WorldSubType.AsteroidBelt, 1.0, 1.0, 0.0)]
+        [InlineData(WorldSize.Tiny, WorldSubType.Rock, 2.0, 1.5, 0.0)]
+        [InlineData(WorldSize.Small, WorldSubType.Rock, 3.0, 2.0, 0.01)]
+        [InlineData(WorldSize.Standard, WorldSubType.Ocean, 1.0, 1.0, 1.0)]
+        [InlineData(WorldSize.Large, WorldSubType.Greenhouse, 2.0, 2.0, 2000.0)]
+        public void GenerateAtmosphericPressure_ShouldReturnExpectedPressure(
+        WorldSize size, WorldSubType subType, double atmosphereMass, double surfaceGravity, double expectedPressure)
+        {
+            // Act
+            double result = AtmosphereTables.GenerateAtmosphericPressure(size, subType, atmosphereMass, surfaceGravity);
+
+            // Assert
+            Assert.Equal(expectedPressure, result, precision: 2);
+        }
+
+        [Theory]
+        [InlineData(0.005, PressureCategory.Trace)]
+        [InlineData(0.01, PressureCategory.VeryThin)]
+        [InlineData(0.5, PressureCategory.VeryThin)]
+        [InlineData(0.75, PressureCategory.Thin)]
+        [InlineData(1.0, PressureCategory.Standard)]
+        [InlineData(1.3, PressureCategory.Dense)]
+        [InlineData(5.0, PressureCategory.VeryDense)]
+        [InlineData(20.0, PressureCategory.Superdense)]
+        public void GetPressureCategory_ShouldReturnCorrectCategory(double pressure, PressureCategory expectedCategory)
+        {
+            // Act
+            var result = AtmosphereTables.GetPressureCategory(pressure);
+
+            // Assert
+            Assert.Equal(expectedCategory, result);
+        }
     }
 }

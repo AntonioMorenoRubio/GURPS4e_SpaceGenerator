@@ -86,7 +86,7 @@ namespace GeneratorLibrary.Generators
                 characteristics.SurfaceGravity = Math.Round(CharacteristicsTables.GenerateWorldSurfaceGravity(characteristics.Diameter, characteristics.Density), 2);
                 characteristics.Mass = Math.Round(characteristics.Density * Math.Pow(characteristics.Diameter, 3), 2);
 
-                world.Characteristics = characteristics; 
+                world.Characteristics = characteristics;
             }
 
             //Atmospheric Pressure that could not be determined without Surface Gravity
