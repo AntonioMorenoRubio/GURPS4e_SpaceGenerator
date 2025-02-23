@@ -51,6 +51,14 @@ namespace GeneratorLibrary.Generators
 
             world.Atmosphere = atmosphere;
 
+            //STEP 4: Hydrographic Coverage
+            HydrographicCoverage hydrographicCoverage = new HydrographicCoverage();
+
+            hydrographicCoverage.Coverage = HydrographicCoverageTables.GenerateHydrographicCoverage(world.Type.Size, world.Type.SubType);
+            hydrographicCoverage.Composition = HydrographicCoverageTables.GetHydrographicComposition(world.Type.Size, world.Type.SubType);
+
+            world.HydrographicCoverage = hydrographicCoverage;
+
             return world;
         }
     }
