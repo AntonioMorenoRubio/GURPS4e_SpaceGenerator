@@ -42,7 +42,6 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             new object[] { WorldSize.Small, WorldSubType.Hadean, new List<string>() },
             new object[] { WorldSize.Standard, WorldSubType.Hadean, new List<string>() },
             new object[] { WorldSize.Tiny, WorldSubType.Sulfur, new List<string>() },
-            
 
             new object[] { WorldSize.Small, WorldSubType.Ice, new List<string> { "Liquid Hydrocarbons" } },
             new object[] { WorldSize.Standard, WorldSubType.Ammonia, new List<string> { "Ammonia", "Water" } },
