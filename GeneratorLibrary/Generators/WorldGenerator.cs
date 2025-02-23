@@ -74,6 +74,14 @@ namespace GeneratorLibrary.Generators
 
             world.Climate = climate;
 
+            //STEP 6: World Size (Characteristics)
+            Characteristics characteristics = new()
+            {
+                Density = Math.Round(CharacteristicsTables.GenerateWorldDensity(world.Type.Size, world.Type.SubType), 2)
+            };
+
+            world.Characteristics = characteristics;
+
             return world;
         }
     }

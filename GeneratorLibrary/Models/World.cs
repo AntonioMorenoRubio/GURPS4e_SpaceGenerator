@@ -8,6 +8,7 @@ namespace GeneratorLibrary.Models
         public Atmosphere? Atmosphere { get; set; }
         public HydrographicCoverage? HydrographicCoverage { get; set; }
         public Climate? Climate { get; set; }
+        public Characteristics? Characteristics { get; set; }
 
         public World() { }
 
@@ -75,6 +76,10 @@ namespace GeneratorLibrary.Models
             sb.AppendLine($"Climate Type: {Climate?.ClimateType}");
             sb.AppendLine($"Black body Correction: {Climate?.BlackBodyCorrection}");
             sb.AppendLine($"Black body Temperature: {Climate?.BlackBodyTemperature}K");
+
+            //STEP 6: World Size (Characteristics)
+            sb.AppendLine("World Size:");
+            sb.AppendLine($"Density: {Characteristics?.Density} Earth Densities. ({Characteristics?.DensityGCC} g/cc.)");
 
             return sb.ToString();
         }
