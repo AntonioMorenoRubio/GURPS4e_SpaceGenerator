@@ -25,11 +25,11 @@ namespace GeneratorLibrary.Tests.Generators.Tables
         [InlineData(WorldSize.Large, WorldSubType.Chthonian, 0.8d, 1.2d)]
         public void GenerateWorldDensity_ReturnsCorrectDensityRange(WorldSize size, WorldSubType subType, double minDensity, double maxDensity)
         {
-                // Act
-                double density = CharacteristicsTables.GenerateWorldDensity(size, subType);
+            // Act
+            double density = CharacteristicsTables.GenerateWorldDensity(size, subType);
 
-                // Assert
-                Assert.InRange(density, minDensity, maxDensity);
+            // Assert
+            Assert.InRange(density, minDensity, maxDensity);
         }
     }
 }
