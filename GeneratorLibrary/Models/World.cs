@@ -6,6 +6,7 @@ namespace GeneratorLibrary.Models
     {
         public WorldType? Type { get; set; }
         public Atmosphere? Atmosphere { get; set; }
+        public HydrographicCoverage? HydrographicCoverage { get; set; }
 
         public World() { }
 
@@ -50,6 +51,22 @@ namespace GeneratorLibrary.Models
                 if (Atmosphere.MarginalAtmosphere is not null)
                     sb.AppendLine($"Marginal Atmosphere: {Atmosphere.MarginalAtmosphere}");
             }
+
+            //STEP 4: Hydrographic Coverage
+            sb.AppendLine("Hydrographic Coverage:");
+            sb.AppendLine($"Coverage: {HydrographicCoverage?.Coverage.ToString("F2")}%");
+
+            if (HydrographicCoverage?.Composition.Count > 0)
+            {
+                sb.Append("Composition: ");
+                for (int i = 0; i < HydrographicCoverage?.Composition?.Count; i++)
+                {
+                    sb.Append(HydrographicCoverage.Composition[i]);
+                    if (i < HydrographicCoverage.Composition.Count - 1)
+                        sb.Append(", ");
+                }
+            }
+
 
             return sb.ToString();
         }
