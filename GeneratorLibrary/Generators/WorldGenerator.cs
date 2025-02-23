@@ -79,6 +79,9 @@ namespace GeneratorLibrary.Generators
             {
                 Density = Math.Round(CharacteristicsTables.GenerateWorldDensity(world.Type.Size, world.Type.SubType), 2)
             };
+            characteristics.Diameter =
+                Math.Round(CharacteristicsTables.GenerateWorldDiameter(world.Type.Size, world.Climate.BlackBodyTemperature, characteristics.Density), 2);
+            characteristics.SurfaceGravity = Math.Round(CharacteristicsTables.GenerateWorldSurfaceGravity(characteristics.Diameter, characteristics.Density),2);
 
             world.Characteristics = characteristics;
 

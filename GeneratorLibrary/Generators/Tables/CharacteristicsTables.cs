@@ -69,5 +69,37 @@ namespace GeneratorLibrary.Generators.Tables
             _ => throw new ArgumentOutOfRangeException(nameof(roll), "Roll value is out of expected range.")
         };
 
+        public static double GenerateWorldDiameter(WorldSize size, double blackbodyTemperature, double density)
+        {
+            // Obtener los valores de la tabla de restricciones de tamaño
+            (double minSize, double maxSize) = size switch
+            {
+                WorldSize.Large => (0.065, 0.091),
+                WorldSize.Standard => (0.030, 0.065),
+                WorldSize.Small => (0.024, 0.030),
+                WorldSize.Tiny => (0.004, 0.024),
+                _ => throw new ArgumentOutOfRangeException(nameof(size), "Invalid world size.")
+            };
+
+            // Calcular el diámetro mínimo y máximo
+            double factor = Math.Sqrt(blackbodyTemperature / density);
+            double minDiameter = factor * minSize;
+            double maxDiameter = factor * maxSize;
+
+            // Calcular un diámetro aleatorio dentro del rango
+            double rollFactor = DiceRoller.Instance.Roll(2, -2) * (0.1 * (maxDiameter - minDiameter));
+            double diameter = minDiameter + rollFactor;
+
+            // Aplicar variación aleatoria de ±5% del rango permitido
+            double variation = (Random.Shared.NextDouble() * 0.1 - 0.05) * (maxDiameter - minDiameter);
+            diameter = Math.Clamp(diameter + variation, minDiameter, maxDiameter);
+
+            return diameter;
+        }
+
+        public static double GenerateWorldSurfaceGravity(double diameter, double density)
+        {
+            return density * diameter;
+        }
     }
 }
