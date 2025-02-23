@@ -83,7 +83,7 @@ namespace GeneratorLibrary.Models
                 sb.AppendLine("World Size:");
                 sb.AppendLine($"Density: {Characteristics?.Density} Earth Densities. ({Characteristics?.DensityGCC} g/cc.)");
                 sb.AppendLine($"Diameter: {Characteristics?.Diameter} Earth Diameter. {Characteristics?.DiameterKilometers} km. {Characteristics?.DiameterMiles} km.");
-                sb.AppendLine($"Surface Gravity: {Characteristics?.SurfaceGravity} Earth Gravities, .");
+                sb.AppendLine($"Surface Gravity: {Characteristics?.SurfaceGravity} Earth Gravities, {Characteristics?.SurfaceDensityInMetresPerSecondSq} m/s^2.");
             }
 
             return sb.ToString();

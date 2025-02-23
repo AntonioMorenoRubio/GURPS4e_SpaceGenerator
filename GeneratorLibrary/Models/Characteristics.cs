@@ -9,5 +9,6 @@
         public double DiameterKilometers => Math.Round(Diameter * 12756, 2);
         public double SurfaceGravity { get; set; }
         public double SurfaceDensityInMetresPerSecondSq => Math.Round(SurfaceGravity * 9.81, 2);
+        public double Mass { get; set; }
     }
 }
