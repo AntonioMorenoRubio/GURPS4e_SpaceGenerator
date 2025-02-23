@@ -75,15 +75,18 @@ namespace GeneratorLibrary.Generators
             world.Climate = climate;
 
             //STEP 6: World Size (Characteristics)
-            Characteristics characteristics = new()
+            if (world.Type.Size is not WorldSize.Special)
             {
-                Density = Math.Round(CharacteristicsTables.GenerateWorldDensity(world.Type.Size, world.Type.SubType), 2)
-            };
-            characteristics.Diameter =
-                Math.Round(CharacteristicsTables.GenerateWorldDiameter(world.Type.Size, world.Climate.BlackBodyTemperature, characteristics.Density), 2);
-            characteristics.SurfaceGravity = Math.Round(CharacteristicsTables.GenerateWorldSurfaceGravity(characteristics.Diameter, characteristics.Density), 2);
+                Characteristics characteristics = new()
+                {
+                    Density = Math.Round(CharacteristicsTables.GenerateWorldDensity(world.Type.Size, world.Type.SubType), 2)
+                };
+                characteristics.Diameter =
+                    Math.Round(CharacteristicsTables.GenerateWorldDiameter(world.Type.Size, world.Climate.BlackBodyTemperature, characteristics.Density), 2);
+                characteristics.SurfaceGravity = Math.Round(CharacteristicsTables.GenerateWorldSurfaceGravity(characteristics.Diameter, characteristics.Density), 2);
 
-            world.Characteristics = characteristics;
+                world.Characteristics = characteristics;
+            }
 
             return world;
         }

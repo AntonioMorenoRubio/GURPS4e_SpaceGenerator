@@ -4,11 +4,11 @@ namespace GeneratorLibrary.Models
 {
     public class World
     {
-        public WorldType? Type { get; set; }
-        public Atmosphere? Atmosphere { get; set; }
-        public HydrographicCoverage? HydrographicCoverage { get; set; }
-        public Climate? Climate { get; set; }
-        public Characteristics? Characteristics { get; set; }
+        public WorldType? Type { get; set; } = null;
+        public Atmosphere? Atmosphere { get; set; } = null;
+        public HydrographicCoverage? HydrographicCoverage { get; set; } = null;
+        public Climate? Climate { get; set; } = null;
+        public Characteristics? Characteristics { get; set; } = null;
 
         public World() { }
 
@@ -78,8 +78,13 @@ namespace GeneratorLibrary.Models
             sb.AppendLine($"Black body Temperature: {Climate?.BlackBodyTemperature}K");
 
             //STEP 6: World Size (Characteristics)
-            sb.AppendLine("World Size:");
-            sb.AppendLine($"Density: {Characteristics?.Density} Earth Densities. ({Characteristics?.DensityGCC} g/cc.)");
+            if (Characteristics is not null)
+            {
+                sb.AppendLine("World Size:");
+                sb.AppendLine($"Density: {Characteristics?.Density} Earth Densities. ({Characteristics?.DensityGCC} g/cc.)");
+                sb.AppendLine($"Diameter: {Characteristics?.Diameter} Earth Diameter. {Characteristics?.DiameterKilometers} km. {Characteristics?.DiameterMiles} km.");
+                sb.AppendLine($"Surface Gravity: {Characteristics?.SurfaceGravity} Earth Gravities, .");
+            }
 
             return sb.ToString();
         }
