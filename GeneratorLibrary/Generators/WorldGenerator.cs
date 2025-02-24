@@ -106,11 +106,12 @@ namespace GeneratorLibrary.Generators
             roll1 = DiceRoller.Instance.Roll();
 
             if (world.Type.SubType is WorldSubType.AsteroidBelt)
-                resourcesHabitability.ResourceValueModifier = ResourceHabitabilityTables.ResourceValueForAsteroidBelts(roll1);             
+                resourcesHabitability.ResourceValueModifier = ResourceHabitabilityTables.ResourceValueForAsteroidBelts(roll1);
             else
                 resourcesHabitability.ResourceValueModifier = ResourceHabitabilityTables.ResourceValueForOtherWorlds(roll1);
 
             resourcesHabitability.ResourceOverall = ResourceHabitabilityTables.GetResourceOverallValue(resourcesHabitability.ResourceValueModifier);
+            resourcesHabitability.HabitabilityModifiers = ResourceHabitabilityTables.GetHabitabilityModifiers(world);
 
             world.ResourcesHabitability = resourcesHabitability;
 

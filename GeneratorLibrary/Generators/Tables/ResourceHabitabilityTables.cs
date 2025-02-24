@@ -1,4 +1,6 @@
-﻿namespace GeneratorLibrary.Generators.Tables
+﻿using GeneratorLibrary.Models;
+
+namespace GeneratorLibrary.Generators.Tables
 {
     public static class ResourceHabitabilityTables
     {
@@ -44,5 +46,82 @@
             5 => ResourceOverallValue.Motherlode,
             _ => throw new ArgumentOutOfRangeException($"No rule for resourceValueModifier: {resourceValueModifier}.")
         };
+
+        public static List<int> GetHabitabilityModifiers(World world)
+        {
+            List<int> modifiers = new();
+
+            // 1. Modificadores por Atmósfera
+            if (world.Atmosphere is null ||
+                world.Atmosphere.PressureCategory == PressureCategory.Trace)
+            {
+                modifiers.Add(0); // No atmósfera o Trace
+            }
+            else if (world.Atmosphere.Composition?.Contains("Oxygen") == false) //Atmósfera NO respirable
+            {
+                bool hasCorrosive = world.Atmosphere.Characteristics.Contains(AtmosphereCharacteristic.Corrosive);
+                bool hasToxic = world.Atmosphere.Characteristics.Contains(AtmosphereCharacteristic.MildlyToxic) ||
+                                world.Atmosphere.Characteristics.Contains(AtmosphereCharacteristic.HighlyToxic) ||
+                                world.Atmosphere.Characteristics.Contains(AtmosphereCharacteristic.LethallyToxic);
+                bool hasSuffocating = world.Atmosphere.Characteristics.Contains(AtmosphereCharacteristic.Suffocating);
+
+                modifiers.Add((hasSuffocating, hasToxic, hasCorrosive) switch
+                {
+                    (true, true, true) => -2,  // Asfixiante, tóxica y corrosiva
+                    (true, true, false) => -1, // Asfixiante y tóxica
+                    (true, false, false) => 0, // Sólo asfixiante
+                    _ => 0                     // Ninguna de las tres
+                });
+            }
+            else // Atmósfera respirable
+            {
+                modifiers.Add(world.Atmosphere.PressureCategory switch
+                {
+                    PressureCategory.VeryThin => 1,
+                    PressureCategory.Thin => 2,
+                    PressureCategory.Standard or PressureCategory.Dense => 3,
+                    PressureCategory.VeryDense or PressureCategory.Superdense => 1,
+                    _ => 0
+                });
+
+                if (world.Atmosphere.MarginalAtmosphere == MarginalAtmosphere.None)
+                {
+                    modifiers.Add(1); // No marginal → +1
+                }
+            }
+
+            // 2️. Modificadores por Hidrografía (Solo agua líquida)
+            if (world.HydrographicCoverage is null || world.HydrographicCoverage.Coverage == 0d ||
+                world.HydrographicCoverage.Composition.Contains("Liquid Water") != true)
+                modifiers.Add(0);
+            else
+                modifiers.Add(world.HydrographicCoverage?.Coverage switch
+                {
+                    <= 59 => 1,
+                    >= 60 and <= 90 => 2,
+                    >= 91 and < 100 => 1,
+                    100 => 0,
+                    _ => 0
+                });
+
+            // 3️. Modificadores por Clima (Solo si la atmósfera es respirable)
+            if (world.Atmosphere is not null &&
+                world.Atmosphere.PressureCategory is not PressureCategory.Trace &&
+                world.Atmosphere.Composition?.Contains("Oxygen") == true)
+            {
+                modifiers.Add(world.Climate?.ClimateType switch
+                {
+                    ClimateType.Frozen or ClimateType.VeryCold => 0,
+                    ClimateType.Cold => 1,
+                    ClimateType.Chilly or ClimateType.Cool or ClimateType.Normal or ClimateType.Warm or ClimateType.Tropical => 2,
+                    ClimateType.Hot => 1,
+                    ClimateType.VeryHot or ClimateType.Infernal => 0,
+                    _ => 0
+                });
+            }
+
+            return modifiers;
+        }
+
     }
 }

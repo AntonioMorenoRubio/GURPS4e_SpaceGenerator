@@ -52,7 +52,7 @@ namespace GeneratorLibrary.Models
                     sb.AppendLine("");
                 }
 
-                if (Atmosphere.MarginalAtmosphere is not null)
+                if (Atmosphere.MarginalAtmosphere is not MarginalAtmosphere.None)
                     sb.AppendLine($"Marginal Atmosphere: {Atmosphere.MarginalAtmosphere}");
 
                 sb.AppendLine($"Pressure: {Atmosphere.Pressure} atm.");
@@ -96,6 +96,7 @@ namespace GeneratorLibrary.Models
             {
                 sb.AppendLine("Resources and Habitability:");
                 sb.AppendLine($"Resource Value: {ResourcesHabitability.ResourceOverall} ({ResourcesHabitability.ResourceValueModifier})");
+                sb.AppendLine($"Habitability: {ResourcesHabitability.Habitability}");
             }
 
             return sb.ToString();

@@ -1,9 +1,102 @@
 ﻿using GeneratorLibrary.Generators.Tables;
+using GeneratorLibrary.Models;
 
 namespace GeneratorLibrary.Tests.Generators.Tables
 {
     public class ResourceHabitabilityTablesTests
     {
+        public static IEnumerable<object[]> WorldsTestData => new List<object[]>
+        {
+            // Mundo sin atmósfera (Vacío)
+            new object[]
+            {
+                new World
+                {
+                    Atmosphere = new Atmosphere { PressureCategory = PressureCategory.Trace },
+                    HydrographicCoverage = new HydrographicCoverage { Coverage = 0.0, Composition = new() },
+                    Climate = new Climate { ClimateType = ClimateType.Frozen }
+                },
+                new List<int> { 0, 0 } // Sin atmósfera o Trace (0), Cobertura Hidrográfica 0 (0)
+            },
+
+            // Mundo con atmósfera respirable pero como la anterior
+            new object[]
+            {
+                new World
+                {
+                    Atmosphere = new Atmosphere
+                    {
+                        PressureCategory = PressureCategory.Trace,
+                        Composition = new List<string> { "Nitrogen", "Oxygen" },
+                        Characteristics = new List<AtmosphereCharacteristic> ()
+                    },
+                    HydrographicCoverage = new HydrographicCoverage { Coverage = 0.0, Composition = new List<string>() },
+                    Climate = new Climate { ClimateType = ClimateType.Frozen }
+                },
+                new List<int> { 0, 0 } // Atmósfera Trace (No respirable, B429) aunque tenga oxígeno (0), océanos 0% (0)
+            },
+        
+            // Mundo con atmósfera tóxica y corrosiva
+            new object[]
+            {
+                new World
+                {
+                    Atmosphere = new Atmosphere
+                    {
+                        PressureCategory = PressureCategory.Standard,
+                        Composition = new List<string> { "Nitrogen", "Carbon Dioxide" },
+                        Characteristics = new List<AtmosphereCharacteristic> {
+                            AtmosphereCharacteristic.Suffocating,
+                            AtmosphereCharacteristic.LethallyToxic,
+                            AtmosphereCharacteristic.Corrosive
+                        }
+                    },
+                    HydrographicCoverage = new HydrographicCoverage { Coverage = 50.0, Composition = new List<string> { "Liquid Water" } },
+                    Climate = new Climate { ClimateType = ClimateType.Normal }
+                },
+                new List<int> { -2, 1 } // Atmósfera letal (-2), océanos 1-59% (+1), clima no afecta (-)
+            },
+
+            // Mundo con atmósfera tóxica y corrosiva pero respirable
+            new object[]
+            {
+                new World
+                {
+                    Atmosphere = new Atmosphere
+                    {
+                        PressureCategory = PressureCategory.Standard,
+                        Composition = new List<string> { "Nitrogen", "Oxygen" },
+                        Characteristics = new List<AtmosphereCharacteristic> {
+                            AtmosphereCharacteristic.Suffocating,
+                            AtmosphereCharacteristic.LethallyToxic,
+                            AtmosphereCharacteristic.Corrosive
+                        }
+                    },
+                    HydrographicCoverage = new HydrographicCoverage { Coverage = 50.0, Composition = new List<string> { "Liquid Water" } },
+                    Climate = new Climate { ClimateType = ClimateType.Normal }
+                },
+                new List<int> { 3, 1, 1, 2 } // Atmósfera respirable estándar (+3), atmósfera no marginal (+1), océanos 1-59% (+1), clima templado (+2)
+            },
+        
+            // Mundo con atmósfera respirable, océanos y clima templado
+            new object[]
+            {
+                new World
+                {
+                    Atmosphere = new Atmosphere
+                    {
+                        PressureCategory = PressureCategory.Standard,
+                        Composition = new List<string> { "Nitrogen", "Oxygen" },
+                        Characteristics = new List<AtmosphereCharacteristic> ()
+                    },
+                    HydrographicCoverage = new HydrographicCoverage { Coverage = 70.0, Composition = new List<string> { "Liquid Water" } },
+                    Climate = new Climate { ClimateType = ClimateType.Warm }
+                },
+                new List<int> { 3, 1, 2, 2 } // Atmósfera estándar (+3), Atmósfera no marginal (+1), océanos 60-90% (+2), clima templado cálido (+2)
+            }
+        };
+
+
         [Theory]
         [InlineData(3, -5)]
         [InlineData(4, -4)]
@@ -95,6 +188,17 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             // Act & Assert
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => ResourceHabitabilityTables.GetResourceOverallValue(resourceValueModifier));
             Assert.Contains("No rule for resourceValueModifier", ex.Message);
+        }
+
+        [Theory]
+        [MemberData(nameof(WorldsTestData))]
+        public void GetHabitabilityModifiers_ShouldReturnExpectedModifiers(World world, List<int> expectedModifiers)
+        {
+            // Act
+            List<int> actualModifiers = ResourceHabitabilityTables.GetHabitabilityModifiers(world);
+
+            // Assert
+            Assert.Equal(expectedModifiers.OrderBy(x => x), actualModifiers.OrderBy(x => x));
         }
     }
 }
