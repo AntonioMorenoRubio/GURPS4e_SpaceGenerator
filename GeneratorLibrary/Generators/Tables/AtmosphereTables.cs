@@ -63,7 +63,7 @@ namespace GeneratorLibrary.Generators.Tables
                 return 0;
 
             double variation = Random.Shared.NextDouble() * 0.1f - 0.05f;
-            return DiceRoller.Instance.Roll() / 10.0 + variation;
+            return Math.Round(DiceRoller.Instance.Roll() / 10.0 + variation, 2);
         }
 
         public static List<string> GetComposition(WorldSize size, WorldSubType subType) =>
