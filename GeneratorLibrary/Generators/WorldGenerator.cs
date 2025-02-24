@@ -115,6 +115,17 @@ namespace GeneratorLibrary.Generators
 
             world.ResourcesHabitability = resourcesHabitability;
 
+            //STEP 8: Settlement Type
+            roll1 = DiceRoller.Instance.Roll(1);
+            SettlementType settlementType = SettlementTypeTables.DetermineSettlementType
+            (
+                world.ResourcesHabitability.Affinity,
+                roll1 / 2 == 0 ? true : false,
+                false
+            );
+
+            world.SettlementType = settlementType;
+
             return world;
         }
     }

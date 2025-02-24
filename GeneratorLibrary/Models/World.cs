@@ -11,6 +11,7 @@ namespace GeneratorLibrary.Models
         public Climate? Climate { get; set; } = null;
         public Characteristics? Characteristics { get; set; } = null;
         public ResourcesHabitability? ResourcesHabitability { get; set; } = null;
+        public SettlementType SettlementType { get; set; }
 
         public World() { }
 
@@ -99,6 +100,9 @@ namespace GeneratorLibrary.Models
                 sb.AppendLine($"Habitability: {ResourcesHabitability.Habitability}");
                 sb.AppendLine($"Affinity: {ResourcesHabitability.Affinity}");
             }
+
+            //STEP 8: Settlement Type
+            sb.AppendLine($"Settlement Type: {SettlementType}.");
 
             return sb.ToString();
         }
