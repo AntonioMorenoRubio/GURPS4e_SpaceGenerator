@@ -4,61 +4,62 @@ namespace GeneratorLibrary.Generators.Tables
 {
     public class HydrographicCoverageTables
     {
-        public static float GenerateHydrographicCoverage(WorldSize size, WorldSubType subType)
+        public static double GenerateHydrographicCoverage(WorldSize size, WorldSubType subType)
         {
             // Definir límites de cobertura según el tipo de mundo
-            (float min, float max) = (size, subType) switch
+            (double min, double max) = (size, subType) switch
             {
-                (WorldSize.Special, WorldSubType.AsteroidBelt) => (0f, 0f),
-                (WorldSize.Tiny, WorldSubType.Rock) => (0f, 0f),
-                (WorldSize.Small, WorldSubType.Rock) => (0f, 0f),
-                (WorldSize.Tiny, WorldSubType.Ice) => (0f, 0f),
-                (WorldSize.Small, WorldSubType.Hadean) => (0f, 0f),
-                (WorldSize.Standard, WorldSubType.Hadean) => (0f, 0f),
-                (WorldSize.Tiny, WorldSubType.Sulfur) => (0f, 0f),
-                (WorldSize.Standard, WorldSubType.Chthonian) => (0f, 0f),
-                (WorldSize.Large, WorldSubType.Chthonian) => (0f, 0f),
+                (WorldSize.Special, WorldSubType.AsteroidBelt) => (0.0, 0.0),
+                (WorldSize.Tiny, WorldSubType.Rock) => (0.0, 0.0),
+                (WorldSize.Small, WorldSubType.Rock) => (0.0, 0.0),
+                (WorldSize.Tiny, WorldSubType.Ice) => (0.0, 0.0),
+                (WorldSize.Small, WorldSubType.Hadean) => (0.0, 0.0),
+                (WorldSize.Standard, WorldSubType.Hadean) => (0.0, 0.0),
+                (WorldSize.Tiny, WorldSubType.Sulfur) => (0.0, 0.0),
+                (WorldSize.Standard, WorldSubType.Chthonian) => (0.0, 0.0),
+                (WorldSize.Large, WorldSubType.Chthonian) => (0.0, 0.0),
 
-                (WorldSize.Small, WorldSubType.Ice) => (30f, 80f),
-                (WorldSize.Standard, WorldSubType.Ammonia) => (50f, 100f),
-                (WorldSize.Large, WorldSubType.Ammonia) => (50f, 100f),
-                (WorldSize.Standard, WorldSubType.Ice) => (0f, 20f),
-                (WorldSize.Large, WorldSubType.Ice) => (0f, 20f),
-                (WorldSize.Standard, WorldSubType.Ocean) => (50f, 100f),
-                (WorldSize.Standard, WorldSubType.Garden) => (50f, 100f),
-                (WorldSize.Large, WorldSubType.Ocean) => (50f, 100f),
-                (WorldSize.Large, WorldSubType.Garden) => (50f, 100f),
-                (WorldSize.Standard, WorldSubType.Greenhouse) => (0f, 50f),
-                (WorldSize.Large, WorldSubType.Greenhouse) => (0f, 50f),
+                (WorldSize.Small, WorldSubType.Ice) => (30.0, 80.0),
+                (WorldSize.Standard, WorldSubType.Ammonia) => (50.0, 100.0),
+                (WorldSize.Large, WorldSubType.Ammonia) => (50.0, 100.0),
+                (WorldSize.Standard, WorldSubType.Ice) => (0.0, 20.0),
+                (WorldSize.Large, WorldSubType.Ice) => (0.0, 20.0),
+                (WorldSize.Standard, WorldSubType.Ocean) => (50.0, 100.0),
+                (WorldSize.Standard, WorldSubType.Garden) => (50.0, 100.0),
+                (WorldSize.Large, WorldSubType.Ocean) => (50.0, 100.0),
+                (WorldSize.Large, WorldSubType.Garden) => (50.0, 100.0),
+                (WorldSize.Standard, WorldSubType.Greenhouse) => (0.0, 50.0),
+                (WorldSize.Large, WorldSubType.Greenhouse) => (0.0, 50.0),
 
                 _ => throw new ArgumentOutOfRangeException($"No hydrographic coverage rule for {size} {subType}")
             };
 
             // Determinar la cobertura base con los valores de dados
-            float coverage = (size, subType) switch
+            double coverage = (size, subType) switch
             {
-                (WorldSize.Small, WorldSubType.Ice) => (DiceRoller.Instance.Roll(1, 2) * 10),
-                (WorldSize.Standard, WorldSubType.Ammonia) => (DiceRoller.Instance.Roll(2) * 10),
-                (WorldSize.Large, WorldSubType.Ammonia) => (DiceRoller.Instance.Roll(2) * 10),
-                (WorldSize.Standard, WorldSubType.Ice) => (DiceRoller.Instance.Roll(2, -10) * 10),
-                (WorldSize.Large, WorldSubType.Ice) => (DiceRoller.Instance.Roll(2, -10) * 10),
-                (WorldSize.Standard, WorldSubType.Ocean) => (DiceRoller.Instance.Roll(1, 4) * 10),
-                (WorldSize.Standard, WorldSubType.Garden) => (DiceRoller.Instance.Roll(1, 4) * 10),
-                (WorldSize.Large, WorldSubType.Ocean) => (DiceRoller.Instance.Roll(1, 6) * 10),
-                (WorldSize.Large, WorldSubType.Garden) => (DiceRoller.Instance.Roll(1, 6) * 10),
-                (WorldSize.Standard, WorldSubType.Greenhouse) => (DiceRoller.Instance.Roll(2, -7) * 10),
-                (WorldSize.Large, WorldSubType.Greenhouse) => (DiceRoller.Instance.Roll(2, -7) * 10),
+                (WorldSize.Small, WorldSubType.Ice) => (DiceRoller.Instance.Roll(1, 2) * 10.0),
+                (WorldSize.Standard, WorldSubType.Ammonia) => (DiceRoller.Instance.Roll(2) * 10.0),
+                (WorldSize.Large, WorldSubType.Ammonia) => (DiceRoller.Instance.Roll(2) * 10.0),
+                (WorldSize.Standard, WorldSubType.Ice) => (DiceRoller.Instance.Roll(2, -10) * 10.0),
+                (WorldSize.Large, WorldSubType.Ice) => (DiceRoller.Instance.Roll(2, -10) * 10.0),
+                (WorldSize.Standard, WorldSubType.Ocean) => (DiceRoller.Instance.Roll(1, 4) * 10.0),
+                (WorldSize.Standard, WorldSubType.Garden) => (DiceRoller.Instance.Roll(1, 4) * 10.0),
+                (WorldSize.Large, WorldSubType.Ocean) => (DiceRoller.Instance.Roll(1, 6) * 10.0),
+                (WorldSize.Large, WorldSubType.Garden) => (DiceRoller.Instance.Roll(1, 6) * 10.0),
+                (WorldSize.Standard, WorldSubType.Greenhouse) => (DiceRoller.Instance.Roll(2, -7) * 10.0),
+                (WorldSize.Large, WorldSubType.Greenhouse) => (DiceRoller.Instance.Roll(2, -7) * 10.0),
 
-                _ => 0f // Los mundos con cobertura fija en 0% ya fueron filtrados en la primera switch
+                _ => 0.0 // Los mundos con cobertura fija en 0% ya fueron filtrados en la primera switch
             };
 
             // Aplicar variación de ±5% correctamente
-            float variation = Random.Shared.NextSingle() * 0.1f - 0.05f; // Genera valores entre -0.05 y +0.05
-            coverage += variation * 100f; // Convertimos la variación a porcentaje
+            double variation = Random.Shared.NextDouble() * 0.1 - 0.05; // Genera valores entre -0.05 y +0.05
+            coverage += variation * 100.0; // Convertimos la variación a porcentaje
 
             // Clampear el resultado dentro del rango específico del mundo
             return Math.Clamp(coverage, min, max);
         }
+
 
         public static List<string> GetHydrographicComposition(WorldSize size, WorldSubType subType)
         {

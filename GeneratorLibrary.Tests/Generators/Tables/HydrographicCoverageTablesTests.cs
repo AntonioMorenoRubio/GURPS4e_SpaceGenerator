@@ -7,30 +7,30 @@ namespace GeneratorLibrary.Tests.Generators.Tables
     {
         public static IEnumerable<object[]> HydrographicCoverageTestData => new List<object[]>
         {
-            new object[] { WorldSize.Special, WorldSubType.AsteroidBelt, 0f, 0f },
-            new object[] { WorldSize.Tiny, WorldSubType.Rock, 0f, 0f },
-            new object[] { WorldSize.Small, WorldSubType.Rock, 0f, 0f },
+            new object[] { WorldSize.Special, WorldSubType.AsteroidBelt, 0.0, 0.0 },
+            new object[] { WorldSize.Tiny, WorldSubType.Rock, 0.0, 0.0 },
+            new object[] { WorldSize.Small, WorldSubType.Rock, 0.0, 0.0 },
 
-            new object[] { WorldSize.Tiny, WorldSubType.Ice, 0f , 0f },
-            new object[] { WorldSize.Small, WorldSubType.Hadean, 0f , 0f },
-            new object[] { WorldSize.Standard, WorldSubType.Hadean, 0f , 0f },
+            new object[] { WorldSize.Tiny, WorldSubType.Ice, 0.0 , 0.0 },
+            new object[] { WorldSize.Small, WorldSubType.Hadean, 0.0 , 0.0 },
+            new object[] { WorldSize.Standard, WorldSubType.Hadean, 0.0 , 0.0 },
 
-            new object[] { WorldSize.Tiny, WorldSubType.Sulfur, 0f , 0f },
+            new object[] { WorldSize.Tiny, WorldSubType.Sulfur, 0.0 , 0.0 },
 
-            new object[] { WorldSize.Standard, WorldSubType.Chthonian, 0f , 0f },
-            new object[] { WorldSize.Large, WorldSubType.Chthonian, 0f , 0f },
+            new object[] { WorldSize.Standard, WorldSubType.Chthonian, 0.0 , 0.0 },
+            new object[] { WorldSize.Large, WorldSubType.Chthonian, 0.0 , 0.0 },
 
-            new object[] { WorldSize.Small, WorldSubType.Ice, 30f, 80f },
-            new object[] { WorldSize.Standard, WorldSubType.Ammonia, 50f, 100f },
-            new object[] { WorldSize.Large, WorldSubType.Ammonia, 50f, 100f },
-            new object[] { WorldSize.Standard, WorldSubType.Ice, 0f, 20f },
-            new object[] { WorldSize.Large, WorldSubType.Ice, 0f, 20f },
-            new object[] { WorldSize.Standard, WorldSubType.Ocean, 50f, 100f },
-            new object[] { WorldSize.Standard, WorldSubType.Garden, 50f, 100f },
-            new object[] { WorldSize.Large, WorldSubType.Ocean, 50f, 100f },
-            new object[] { WorldSize.Large, WorldSubType.Garden, 50f, 100f },
-            new object[] { WorldSize.Standard, WorldSubType.Greenhouse, 0f, 50f },
-            new object[] { WorldSize.Large, WorldSubType.Greenhouse, 0f, 50f }
+            new object[] { WorldSize.Small, WorldSubType.Ice, 30.0, 80.0 },
+            new object[] { WorldSize.Standard, WorldSubType.Ammonia, 50.0, 100.0 },
+            new object[] { WorldSize.Large, WorldSubType.Ammonia, 50.0, 100.0 },
+            new object[] { WorldSize.Standard, WorldSubType.Ice, 0.0, 20.0 },
+            new object[] { WorldSize.Large, WorldSubType.Ice, 0.0, 20.0 },
+            new object[] { WorldSize.Standard, WorldSubType.Ocean, 50.0, 100.0 },
+            new object[] { WorldSize.Standard, WorldSubType.Garden, 50.0, 100.0 },
+            new object[] { WorldSize.Large, WorldSubType.Ocean, 50.0, 100.0 },
+            new object[] { WorldSize.Large, WorldSubType.Garden, 50.0, 100.0 },
+            new object[] { WorldSize.Standard, WorldSubType.Greenhouse, 0.0, 50.0 },
+            new object[] { WorldSize.Large, WorldSubType.Greenhouse, 0.0, 50.0 }
         };
 
         public static IEnumerable<object[]> HydrographicCompositionTestData => new List<object[]>
@@ -60,10 +60,10 @@ namespace GeneratorLibrary.Tests.Generators.Tables
 
         [Theory]
         [MemberData(nameof(HydrographicCoverageTestData))]
-        public void GenerateHydrographicCoverage_ShouldReturnExpectedRange(WorldSize size, WorldSubType subType, float expectedMin, float expectedMax)
+        public void GenerateHydrographicCoverage_ShouldReturnExpectedRange(WorldSize size, WorldSubType subType, double expectedMin, double expectedMax)
         {
             // Act
-            float result = HydrographicCoverageTables.GenerateHydrographicCoverage(size, subType);
+            double result = HydrographicCoverageTables.GenerateHydrographicCoverage(size, subType);
 
             // Assert
             Assert.InRange(result, expectedMin, expectedMax);
