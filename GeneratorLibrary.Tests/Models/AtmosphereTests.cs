@@ -6,24 +6,6 @@ namespace GeneratorLibrary.Tests.Models
     public class AtmosphereTests
     {
         [Fact]
-        public void Atmosphere_ShouldAllowNullOrEmptyLists()
-        {
-            // Act
-            var atmosphere = new Atmosphere
-            {
-                Mass = 1.0,
-                Composition = null,
-                Characteristics = null,
-                MarginalAtmosphere = null
-            };
-
-            // Assert
-            Assert.Null(atmosphere.Composition);
-            Assert.Null(atmosphere.Characteristics);
-            Assert.Null(atmosphere.MarginalAtmosphere);
-        }
-
-        [Fact]
         public void Atmosphere_With_ShouldCreateNewInstanceWithModifiedValues()
         {
             // Arrange

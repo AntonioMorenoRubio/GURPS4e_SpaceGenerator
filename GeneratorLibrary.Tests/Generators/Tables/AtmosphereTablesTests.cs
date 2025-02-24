@@ -284,33 +284,26 @@ namespace GeneratorLibrary.Tests.Generators.Tables
         }
 
         [Theory]
-        [InlineData(null, true, true, true)]  // Caso 1: Atmosphere es null
-        [InlineData(true, null, true, true)]  // Caso 2: Composition es null
-        [InlineData(true, true, null, true)]  // Caso 3: Characteristics es null
-        [InlineData(true, true, true, null)]  // Caso 4: MarginalAtmosphere es null
-        public void ApplyMarginalAtmosphere_InvalidInputs_ShouldReturnNull(
-        bool? createAtmosphere, bool? hasComposition, bool? hasCharacteristics, bool? hasMarginal)
+        [InlineData(false, MarginalAtmosphere.None)]  // Caso 1: Atmosphere es null
+        [InlineData(true, MarginalAtmosphere.None)]  // Caso 2: Atmosphere tiene MarginalAtmosphere.None
+        public void ApplyMarginalAtmosphere_InvalidInputs_ShouldReturnSameAtmosphere(bool createAtmosphere, MarginalAtmosphere marginal)
         {
             // Arrange
-            Atmosphere? atmosphere = createAtmosphere == true ? new Atmosphere() : null;
+            Atmosphere? atmosphere = createAtmosphere ? new Atmosphere() : null;
 
             if (atmosphere is not null)
             {
-                atmosphere.Composition = hasComposition == true ? new List<string>() : null;
-                atmosphere.Characteristics = hasCharacteristics == true ? new List<AtmosphereCharacteristic>() : null;
-                atmosphere.MarginalAtmosphere = hasMarginal == true ? MarginalAtmosphere.HighCarbonDioxide : null;
+                atmosphere.MarginalAtmosphere = marginal;
             }
 
             var randomProvider = new TestRandomProvider(0.5); // No importa el valor aquí
 
             // Act
-            var result = AtmosphereTables.ApplyMarginalAtmosphere(atmosphere, randomProvider);
+            var actual = AtmosphereTables.ApplyMarginalAtmosphere(atmosphere, randomProvider);
 
             // Assert
-            Assert.Null(result);
+            Assert.Equal(atmosphere, actual);
         }
-
-
 
         [Theory]
         [MemberData(nameof(AtmosphereMarginalTestData))]

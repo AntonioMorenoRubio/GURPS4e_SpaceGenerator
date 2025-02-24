@@ -3,16 +3,15 @@
     public record Atmosphere
     {
         public double Mass { get; set; }
-        public List<string>? Composition { get; set; }
-        public List<AtmosphereCharacteristic>? Characteristics { get; set; }
-        public MarginalAtmosphere? MarginalAtmosphere { get; set; }
+        public List<string> Composition { get; set; } = new();
+        public List<AtmosphereCharacteristic> Characteristics { get; set; } = new();
+        public MarginalAtmosphere MarginalAtmosphere { get; set; }
         public double Pressure { get; set; }
-        public PressureCategory? PressureCategory { get; set; }
+        public PressureCategory PressureCategory { get; set; }
     }
 
     public enum AtmosphereCharacteristic
     {
-        None,
         Suffocating,
         Corrosive,
         MildlyToxic,
@@ -23,6 +22,7 @@
 
     public enum MarginalAtmosphere
     {
+        None,
         ChlorineOrFluorine,
         SulphurCompounds,
         NitrogenCompounds,

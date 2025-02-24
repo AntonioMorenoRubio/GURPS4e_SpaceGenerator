@@ -120,8 +120,8 @@ namespace GeneratorLibrary.Generators.Tables
 
         public static Atmosphere? ApplyMarginalAtmosphere(Atmosphere? atmosphere, IRandomProvider randomProvider)
         {
-            if (atmosphere?.Composition is null || atmosphere.Characteristics is null || atmosphere.MarginalAtmosphere is null)
-                return null;
+            if (atmosphere is null || atmosphere.MarginalAtmosphere is MarginalAtmosphere.None)
+                return atmosphere;
 
             // Clonar la atmósfera original para evitar modificaciones accidentales
             Atmosphere newAtmosphere = new()
