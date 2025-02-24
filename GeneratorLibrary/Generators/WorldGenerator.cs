@@ -101,6 +101,19 @@ namespace GeneratorLibrary.Generators
 
             world.Atmosphere.PressureCategory = AtmosphereTables.GetPressureCategory(world.Atmosphere.Pressure);
 
+            //STEP 7: Resources and Habitability
+            ResourcesHabitability resourcesHabitability = new();
+            roll1 = DiceRoller.Instance.Roll();
+
+            if (world.Type.SubType is WorldSubType.AsteroidBelt)
+                resourcesHabitability.ResourceValueModifier = ResourceHabitabilityTables.ResourceValueForAsteroidBelts(roll1);             
+            else
+                resourcesHabitability.ResourceValueModifier = ResourceHabitabilityTables.ResourceValueForOtherWorlds(roll1);
+
+            resourcesHabitability.ResourceOverall = ResourceHabitabilityTables.GetResourceOverallValue(resourcesHabitability.ResourceValueModifier);
+
+            world.ResourcesHabitability = resourcesHabitability;
+
             return world;
         }
     }

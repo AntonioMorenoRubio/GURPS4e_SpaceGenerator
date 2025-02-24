@@ -1,4 +1,5 @@
 using System.Text;
+using GeneratorLibrary.Generators.Tables;
 
 namespace GeneratorLibrary.Models
 {
@@ -9,6 +10,7 @@ namespace GeneratorLibrary.Models
         public HydrographicCoverage? HydrographicCoverage { get; set; } = null;
         public Climate? Climate { get; set; } = null;
         public Characteristics? Characteristics { get; set; } = null;
+        public ResourcesHabitability? ResourcesHabitability { get; set; } = null;
 
         public World() { }
 
@@ -87,6 +89,13 @@ namespace GeneratorLibrary.Models
                 sb.AppendLine($"Density: {Characteristics?.Density} Earth Densities. ({Characteristics?.DensityGCC} g/cc.)");
                 sb.AppendLine($"Diameter: {Characteristics?.Diameter} Earth Diameter. {Characteristics?.DiameterKilometers} km. {Characteristics?.DiameterMiles} km.");
                 sb.AppendLine($"Surface Gravity: {Characteristics?.SurfaceGravity} Earth Gravities, {Characteristics?.SurfaceDensityInMetresPerSecondSq} m/s^2.");
+            }
+
+            //STEP 7: Resources and Habitability
+            if (ResourcesHabitability is not null)
+            {
+                sb.AppendLine("Resources and Habitability:");
+                sb.AppendLine($"Resource Value: {ResourcesHabitability.ResourceOverall} ({ResourcesHabitability.ResourceValueModifier})");
             }
 
             return sb.ToString();
