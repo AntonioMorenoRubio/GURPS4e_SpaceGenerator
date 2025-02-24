@@ -97,6 +97,7 @@ namespace GeneratorLibrary.Models
                 sb.AppendLine("Resources and Habitability:");
                 sb.AppendLine($"Resource Value: {ResourcesHabitability.ResourceOverall} ({ResourcesHabitability.ResourceValueModifier})");
                 sb.AppendLine($"Habitability: {ResourcesHabitability.Habitability}");
+                sb.AppendLine($"Affinity: {ResourcesHabitability.Affinity}");
             }
 
             return sb.ToString();
