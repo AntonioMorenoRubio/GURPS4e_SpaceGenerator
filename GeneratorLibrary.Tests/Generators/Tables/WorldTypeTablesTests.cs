@@ -215,7 +215,8 @@ namespace GeneratorLibrary.Tests.Generators.Tables
         public void GenerateWorldType_InvalidOverallType_ShouldThrowArgumentOutOfRangeException(string overallType, int diceRoll)
         {
             // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => WorldTypeTables.GenerateWorldType(overallType, diceRoll));
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => WorldTypeTables.GenerateWorldType(overallType, diceRoll));
+            Assert.Contains("OverallType for World not expected", ex.Message);
         }
     }
 }

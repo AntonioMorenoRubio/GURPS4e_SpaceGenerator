@@ -3,7 +3,7 @@ using GeneratorLibrary.Models;
 
 namespace GeneratorLibrary.Tests.Generators.Tables
 {
-    public class ChartacteristicsTablesTests
+    public class CharacteristicsTablesTests
     {
         [Theory]
         [InlineData(WorldSize.Tiny, WorldSubType.Ice, 0.3d, 0.7d)]

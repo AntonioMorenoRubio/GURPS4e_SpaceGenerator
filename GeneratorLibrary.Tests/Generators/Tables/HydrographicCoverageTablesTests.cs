@@ -79,7 +79,5 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             // Assert
             Assert.Equal(expectedComposition, result);
         }
-
-
     }
 }

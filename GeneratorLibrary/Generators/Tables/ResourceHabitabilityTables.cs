@@ -20,7 +20,7 @@
 
         public static int ResourceValueForOtherWorlds(int roll) => roll switch
         {
-            < 3 => -3,
+            <= 2 => -3,
             3 or 4 => -2,
             5 or 6 or 7 => -1,
             >= 8 and <= 13 => 0,

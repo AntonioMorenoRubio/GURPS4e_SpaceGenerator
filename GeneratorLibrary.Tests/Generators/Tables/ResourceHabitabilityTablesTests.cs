@@ -39,8 +39,8 @@ namespace GeneratorLibrary.Tests.Generators.Tables
         [InlineData(5, -1)]
         [InlineData(6, -1)]
         [InlineData(7, -1)]
-        [InlineData(8, -0)]
-        [InlineData(9, -0)]
+        [InlineData(8, 0)]
+        [InlineData(9, 0)]
         [InlineData(10, 0)]
         [InlineData(11, 0)]
         [InlineData(12, 0)]
@@ -92,8 +92,9 @@ namespace GeneratorLibrary.Tests.Generators.Tables
         [InlineData(100)]
         public void GetResourceOverallValue_InvalidModifier_ShouldThrowArgumentOutOfRangeException(int resourceValueModifier)
         {
-            //Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => ResourceHabitabilityTables.GetResourceOverallValue(resourceValueModifier));
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => ResourceHabitabilityTables.GetResourceOverallValue(resourceValueModifier));
+            Assert.Contains("No rule for resourceValueModifier", ex.Message);
         }
     }
 }
