@@ -5,13 +5,17 @@ namespace GeneratorLibrary.Models
 {
     public class World
     {
+        //Physical Parameters
         public WorldType? Type { get; set; } = null;
         public Atmosphere? Atmosphere { get; set; } = null;
         public HydrographicCoverage? HydrographicCoverage { get; set; } = null;
         public Climate? Climate { get; set; } = null;
         public Characteristics? Characteristics { get; set; } = null;
         public ResourcesHabitability? ResourcesHabitability { get; set; } = null;
-        public SettlementData? SettlementData { get; set; }
+
+        //Social Parameters
+        public SettlementData? SettlementData { get; set; } = null;
+        public TechLevel? TechLevel { get; set; } = null;
 
         public World() { }
 
@@ -103,8 +107,30 @@ namespace GeneratorLibrary.Models
 
             //STEP 8: Settlement Type (SettlementData)
             sb.AppendLine($"Settlement Data:");
-            sb.AppendLine($"Settlement Type: {SettlementData?.Type}.");
+            sb.AppendLine($"Settlement Type: {SettlementData?.Type}");
             sb.AppendLine($"Is within claimed Space?: {SettlementData?.IsInClaimedSpace}");
+
+            //STEP 9: Tech Level
+            sb.AppendLine($"Tech Level:");
+            sb.AppendLine($"TL: {TechLevel?.TL}");
+            switch (TechLevel?.Status)
+            {
+                case TechStatus.StandardMinus3:
+                    sb.AppendLine($"Tech Status: Standard - 3");
+                    break;
+                case TechStatus.StandardMinus2:
+                    sb.AppendLine($"Tech Status: Standard - 2");
+                    break;
+                case TechStatus.StandardMinus1:
+                    sb.AppendLine($"Tech Status: Standard - 1");
+                    break;
+                case TechStatus.Advanced or TechStatus.Delayed:
+                    sb.AppendLine($"Tech Status: Standard ({TechLevel?.Status})");
+                    break;
+                default:
+                    sb.AppendLine($"Tech Status: {TechLevel?.Status}");
+                    break;
+            }
 
             return sb.ToString();
         }

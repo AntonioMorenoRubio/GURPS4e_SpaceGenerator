@@ -7,13 +7,15 @@ namespace GeneratorLibrary.Generators
 {
     public class WorldGenerator
     {
+        private int SettingTL = 10;
         private readonly DiceRoller _diceRoller = DiceRoller.Instance;
         private readonly IRandomProvider _randomProvider = new RandomProvider();
 
         public WorldGenerator() { }
 
-        public WorldGenerator(int seed)
+        public WorldGenerator(int TL, int seed)
         {
+            SettingTL = TL;
             _diceRoller = new(seed);
         }
 
@@ -128,6 +130,20 @@ namespace GeneratorLibrary.Generators
             );
 
             world.SettlementData = settlementData;
+
+            //STEP 9: Tech Level
+            TechLevel techLevel = new();
+            roll1 = DiceRoller.Instance.Roll();
+            techLevel.Status = TechLevelTables.DetermineTechStatus(world.SettlementData, world.ResourcesHabitability.Habitability, roll1);
+            if (techLevel.Status is TechStatus.Primitive)
+            {
+                roll2 = DiceRoller.Instance.Roll();
+                techLevel.TL = TechLevelTables.DetermineTechLevel(techLevel.Status, world.ResourcesHabitability.Habitability, SettingTL, roll2);
+            }
+            else
+                techLevel.TL = TechLevelTables.DetermineTechLevel(techLevel.Status, world.ResourcesHabitability.Habitability, SettingTL);
+
+            world.TechLevel = techLevel;
 
             return world;
         }

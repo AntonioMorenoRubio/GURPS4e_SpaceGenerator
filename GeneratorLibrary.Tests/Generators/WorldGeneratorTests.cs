@@ -65,13 +65,14 @@ public class WorldGeneratorTests
     public void GenerateWorld_ShouldBeDeterministic()
     {
         // Arrange
-        var seed = 123;
-        var generator1 = new WorldGenerator(seed);
-        var generator2 = new WorldGenerator(seed);
+        int seed = 123;
+        int TL = 10;
+        var generator1 = new WorldGenerator(TL, seed);
+        var generator2 = new WorldGenerator(TL, seed);
 
         // Act
-        var world1 = generator1.GenerateWorld();
-        var world2 = generator2.GenerateWorld();
+        World? world1 = generator1.GenerateWorld();
+        World? world2 = generator2.GenerateWorld();
 
         // Assert
         Assert.Equal(world1?.Type?.Size, world2?.Type?.Size);
