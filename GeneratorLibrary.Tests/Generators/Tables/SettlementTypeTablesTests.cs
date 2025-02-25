@@ -28,7 +28,7 @@ namespace GeneratorLibrary.Tests.Generators.Tables
         public void DetermineSettlementType_ShouldReturnExpected(int affinity, bool isClaimedSpace, bool isHomeworld, SettlementType expected)
         {
             // Act
-            SettlementType result = SettlementTypeTables.DetermineSettlementType(affinity, isClaimedSpace, isHomeworld);
+            SettlementType result = SettlementDataTables.DetermineSettlementType(affinity, isClaimedSpace, isHomeworld);
 
             // Assert
             Assert.Equal(expected, result);

@@ -116,15 +116,18 @@ namespace GeneratorLibrary.Generators
             world.ResourcesHabitability = resourcesHabitability;
 
             //STEP 8: Settlement Type
+            SettlementData settlementData = new SettlementData();
             roll1 = DiceRoller.Instance.Roll(1);
-            SettlementType settlementType = SettlementTypeTables.DetermineSettlementType
+            roll2 = DiceRoller.Instance.Roll();
+            settlementData.IsInClaimedSpace = roll1 / 2 == 0 ? true : false;
+            SettlementType settlementType = (roll2 == 3 || roll2 == 4) ? SettlementType.Homeworld : SettlementDataTables.DetermineSettlementType
             (
                 world.ResourcesHabitability.Affinity,
-                roll1 / 2 == 0 ? true : false,
+                settlementData.IsInClaimedSpace,
                 false
             );
 
-            world.SettlementType = settlementType;
+            world.SettlementData = settlementData;
 
             return world;
         }

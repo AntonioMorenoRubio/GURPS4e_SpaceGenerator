@@ -2,7 +2,7 @@
 
 namespace GeneratorLibrary.Generators.Tables
 {
-    public static class SettlementTypeTables
+    public static class SettlementDataTables
     {
         public static SettlementType DetermineSettlementType(int affinity, bool isClaimedSpace, bool isHomeworld = false)
         {
