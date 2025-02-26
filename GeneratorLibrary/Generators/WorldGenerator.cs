@@ -196,7 +196,30 @@ namespace GeneratorLibrary.Generators
                     Unity = SocietyTypeTables.GenerateWorldUnity(roll1, world.Population.PopulationRating)
                 };
 
+                //We will choose one Interstellar Type at Random
+                int random = Random.Shared.Next(3);
+
+                switch (random)
+                {
+                    case 0:
+                        society.InterstellarSocietyType = InterstellarSocietyType.AnarchyOrAlliance;
+                        break;
+                    case 1:
+                        society.InterstellarSocietyType = InterstellarSocietyType.Federation;
+                        break;
+                    case 2:
+                        society.InterstellarSocietyType = InterstellarSocietyType.CorporateState;
+                        break;
+                    case 3:
+                        society.InterstellarSocietyType = InterstellarSocietyType.Empire;
+                        break;
+                }
+
+                roll1 = DiceRoller.Instance.Roll();
+                society.SocietyType = SocietyTypeTables.DetermineSocietyType(society.InterstellarSocietyType, world.TechLevel.TL, roll1);
+                
                 world.Society = society;
+
             }
 
             return world;

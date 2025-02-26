@@ -115,5 +115,63 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             // Assert
             Assert.Equal(expected, result);
         }
+
+        [Theory]
+        // Anarchy or Alliance
+        [InlineData(InterstellarSocietyType.AnarchyOrAlliance, 5, 2, SocietyType.ClanTribal)]
+        [InlineData(InterstellarSocietyType.AnarchyOrAlliance, 10, 6, SocietyType.RepresentativeDemocracy)]
+        [InlineData(InterstellarSocietyType.AnarchyOrAlliance, 7, 7, SocietyType.Dictatorship)]
+        [InlineData(InterstellarSocietyType.AnarchyOrAlliance, 8, 9, SocietyType.RepresentativeDemocracy)]
+        [InlineData(InterstellarSocietyType.AnarchyOrAlliance, 6, 12, SocietyType.RepresentativeDemocracy)]
+        [InlineData(InterstellarSocietyType.AnarchyOrAlliance, 9, 17, SocietyType.Caste)]
+        [InlineData(InterstellarSocietyType.AnarchyOrAlliance, 10, 22, SocietyType.Anarchy)]
+        [InlineData(InterstellarSocietyType.AnarchyOrAlliance, 10, 30, SocietyType.Anarchy)]
+
+        // Federation
+        [InlineData(InterstellarSocietyType.Federation, 5, 2, SocietyType.ClanTribal)]
+        [InlineData(InterstellarSocietyType.Federation, 10, 6, SocietyType.RepresentativeDemocracy)]
+        [InlineData(InterstellarSocietyType.Federation, 7, 7, SocietyType.Dictatorship)]
+        [InlineData(InterstellarSocietyType.Federation, 8, 9, SocietyType.RepresentativeDemocracy)]
+        [InlineData(InterstellarSocietyType.Federation, 6, 12, SocietyType.RepresentativeDemocracy)]
+        [InlineData(InterstellarSocietyType.Federation, 9, 17, SocietyType.Caste)]
+        [InlineData(InterstellarSocietyType.Federation, 10, 23, SocietyType.Anarchy)]
+        [InlineData(InterstellarSocietyType.Federation, 10, 30, SocietyType.Anarchy)]
+
+        // Corporate State
+        [InlineData(InterstellarSocietyType.CorporateState, 5, 2, SocietyType.ClanTribal)]
+        [InlineData(InterstellarSocietyType.CorporateState, 10, 6, SocietyType.RepresentativeDemocracy)]
+        [InlineData(InterstellarSocietyType.CorporateState, 7, 7, SocietyType.Dictatorship)]
+        [InlineData(InterstellarSocietyType.CorporateState, 8, 9, SocietyType.RepresentativeDemocracy)]
+        [InlineData(InterstellarSocietyType.CorporateState, 6, 12, SocietyType.AthenianDemocracy)]
+        [InlineData(InterstellarSocietyType.CorporateState, 9, 17, SocietyType.Caste)]
+        [InlineData(InterstellarSocietyType.CorporateState, 10, 23, SocietyType.Anarchy)]
+        [InlineData(InterstellarSocietyType.CorporateState, 10, 30, SocietyType.Anarchy)]
+
+        // Empire
+        [InlineData(InterstellarSocietyType.Empire, 5, 2, SocietyType.ClanTribal)]
+        [InlineData(InterstellarSocietyType.Empire, 10, 6, SocietyType.Dictatorship)]
+        [InlineData(InterstellarSocietyType.Empire, 7, 7, SocietyType.Dictatorship)]
+        [InlineData(InterstellarSocietyType.Empire, 8, 9, SocietyType.Dictatorship)]
+        [InlineData(InterstellarSocietyType.Empire, 6, 12, SocietyType.RepresentativeDemocracy)]
+        [InlineData(InterstellarSocietyType.Empire, 9, 17, SocietyType.Caste)]
+        [InlineData(InterstellarSocietyType.Empire, 10, 23, SocietyType.Anarchy)]
+        [InlineData(InterstellarSocietyType.Empire, 10, 30, SocietyType.Anarchy)]
+
+        public void DetermineSocietyType_ShouldReturnExpectedType(InterstellarSocietyType interstellarSociety, int techLevel, int roll, SocietyType expected)
+        {
+            // Act
+            var result = SocietyTypeTables.DetermineSocietyType(interstellarSociety, techLevel, roll);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData((InterstellarSocietyType)99, 5, 10)]  // Tipo de sociedad inválido
+        public void DetermineSocietyType_InvalidInputs_ShouldThrowException(InterstellarSocietyType interstellarSociety, int techLevel, int roll)
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => SocietyTypeTables.DetermineSocietyType(interstellarSociety, techLevel, roll));
+        }
     }
 }

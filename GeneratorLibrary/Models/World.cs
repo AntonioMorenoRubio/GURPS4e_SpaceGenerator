@@ -146,6 +146,8 @@ namespace GeneratorLibrary.Models
             {
                 sb.AppendLine("Society:");
                 sb.AppendLine($"World Unity: {Society?.Unity}");
+                sb.AppendLine($"Interstellar Society Type: {Society?.InterstellarSocietyType}");
+                sb.AppendLine($"Society Type: {Society?.SocietyType}");
             }
 
             return sb.ToString();
