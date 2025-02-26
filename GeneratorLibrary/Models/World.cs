@@ -137,6 +137,7 @@ namespace GeneratorLibrary.Models
             //STEP 10: Population
             sb.AppendLine("Population:");
             sb.AppendLine($"Carrying Capacity: {Population?.CarryingCapacity.ToString("N0", CultureInfo.CurrentCulture)}");
+            sb.AppendLine($"Current Population: {Population?.CurrentPopulation.ToString("N0", CultureInfo.CurrentCulture)}");
 
             return sb.ToString();
         }

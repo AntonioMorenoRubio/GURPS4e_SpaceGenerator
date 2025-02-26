@@ -163,6 +163,24 @@ namespace GeneratorLibrary.Generators
                     world.Characteristics?.Diameter);
 
 
+            switch (world.SettlementData.Type)
+            {
+                case SettlementType.Homeworld:
+                    roll1 = DiceRoller.Instance.Roll(2);
+                    population.CurrentPopulation = PopulationTables.GenerateHomeworldPopulation(population.CarryingCapacity, world.TechLevel.TL, roll1);
+                    break;
+                case SettlementType.Colony:
+                    roll1 = DiceRoller.Instance.Roll(3);
+                    population.CurrentPopulation = PopulationTables.GenerateColonyPopulation(population.CarryingCapacity, world.TechLevel.TL, roll1);
+                    break;
+                case SettlementType.Outpost:
+                    roll1 = DiceRoller.Instance.Roll(3);
+                    population.CurrentPopulation = PopulationTables.GenerateOutpostPopulation(roll1);
+                    break;
+                default:    //Uninhabited no necesita población
+                    break;
+            }
+
             world.Population = population;
 
             return world;
