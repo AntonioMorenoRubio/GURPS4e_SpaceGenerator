@@ -217,7 +217,41 @@ namespace GeneratorLibrary.Generators
 
                 roll1 = DiceRoller.Instance.Roll();
                 society.SocietyType = SocietyTypeTables.DetermineSocietyType(society.InterstellarSocietyType, world.TechLevel.TL, roll1);
-                
+
+                if (society.Unity == WorldUnity.WorldGovernment_Special)
+                {
+                    roll1 = DiceRoller.Instance.Roll(3);
+                    roll2 = DiceRoller.Instance.Roll(1);
+                    int hasTwoSpecialSocieties = DiceRoller.Instance.Roll(1);
+
+                    List<SpecialSociety> specialSocieties = new();
+
+                    while (world.TechLevel.TL <= 7 && roll1 == 18)
+                    {
+                        roll1 = DiceRoller.Instance.Roll();
+                    }
+
+                    bool MatriarchyOverPatriarchy = roll2 % 2 == 0;
+                    specialSocieties.Add(SocietyTypeTables.GenerateSpecialSociety(roll1, MatriarchyOverPatriarchy));
+
+                    //Check for second Special Society Type
+                    if ((specialSocieties.Contains(SpecialSociety.Subjugated) ||
+                    specialSocieties.Contains(SpecialSociety.Socialist) ||
+                    specialSocieties.Contains(SpecialSociety.Oligarchy) ||
+                    specialSocieties.Contains(SpecialSociety.Meritocracy)) &&
+                    hasTwoSpecialSocieties >= 1 && hasTwoSpecialSocieties <= 3)
+                    {
+                        roll1 = DiceRoller.Instance.Roll();
+                        while (world.TechLevel.TL <= 7 && roll1 == 18)
+                        {
+                            roll1 = DiceRoller.Instance.Roll();
+                        }
+
+                        specialSocieties.Add(SocietyTypeTables.GenerateSpecialSociety(roll1, MatriarchyOverPatriarchy));
+                    }
+                    society.SpecialSocieties = specialSocieties;
+                }
+
                 world.Society = society;
 
             }

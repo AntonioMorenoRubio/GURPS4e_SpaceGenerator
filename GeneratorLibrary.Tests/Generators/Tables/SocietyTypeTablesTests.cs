@@ -173,5 +173,44 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             // Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => SocietyTypeTables.DetermineSocietyType(interstellarSociety, techLevel, roll));
         }
+
+        [Theory]
+        [InlineData(3, false, SpecialSociety.Subjugated)]
+        [InlineData(4, false, SpecialSociety.Subjugated)]
+        [InlineData(5, false, SpecialSociety.Subjugated)]
+        [InlineData(6, false, SpecialSociety.Sanctuary)]
+        [InlineData(7, false, SpecialSociety.MilitaryGovernment)]
+        [InlineData(8, false, SpecialSociety.MilitaryGovernment)]
+        [InlineData(9, false, SpecialSociety.Socialist)]
+        [InlineData(10, false, SpecialSociety.Bureaucracy)]
+        [InlineData(11, false, SpecialSociety.Colony)]
+        [InlineData(12, false, SpecialSociety.Colony)]
+        [InlineData(13, false, SpecialSociety.Oligarchy)]
+        [InlineData(14, false, SpecialSociety.Oligarchy)]
+        [InlineData(15, false, SpecialSociety.Meritocracy)]
+        [InlineData(16, false, SpecialSociety.Patriarchy)] // No es matriarcado
+        [InlineData(16, true, SpecialSociety.Matriarchy)] // Matriarcado activo
+        [InlineData(17, false, SpecialSociety.Utopia)]
+        [InlineData(18, false, SpecialSociety.Cybercracy)]
+
+
+        public void GenerateSpecialSociety_ShouldReturnExpectedSociety(int roll, bool isMatriarchy, SpecialSociety expected)
+        {
+            // Act
+            var result = SocietyTypeTables.GenerateSpecialSociety(roll, isMatriarchy);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData(2, false)] // Debajo del rango válido
+        [InlineData(19, true)] // Encima del rango válido
+        [InlineData(25, false)] // Valor extremo
+        public void GenerateSpecialSociety_InvalidRoll_ShouldThrowException(int roll, bool isMatriarchy)
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => SocietyTypeTables.GenerateSpecialSociety(roll, isMatriarchy));
+        }
     }
 }

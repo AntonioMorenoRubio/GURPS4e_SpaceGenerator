@@ -98,5 +98,21 @@ namespace GeneratorLibrary.Generators.Tables
                 _ => throw new ArgumentOutOfRangeException($"No rule for {interstellarSociety} with roll {modifiedRoll}.")
             };
         }
+
+        public static SpecialSociety GenerateSpecialSociety(int roll, bool isMatriarchy) => roll switch
+        {
+            3 or 4 or 5 => SpecialSociety.Subjugated,
+            6 => SpecialSociety.Sanctuary,
+            7 or 8 => SpecialSociety.MilitaryGovernment,
+            9 => SpecialSociety.Socialist,
+            10 => SpecialSociety.Bureaucracy,
+            11 or 12 => SpecialSociety.Colony,
+            13 or 14 => SpecialSociety.Oligarchy,
+            15 => SpecialSociety.Meritocracy,
+            16 => isMatriarchy ? SpecialSociety.Matriarchy : SpecialSociety.Patriarchy,
+            17 => SpecialSociety.Utopia,
+            18 => SpecialSociety.Cybercracy,
+            _ => throw new ArgumentOutOfRangeException($"No rule for Special Society with roll {roll}.")
+        };
     }
 }

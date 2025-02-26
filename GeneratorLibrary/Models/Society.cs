@@ -5,6 +5,7 @@
         public WorldUnity Unity { get; set; }
         public InterstellarSocietyType InterstellarSocietyType { get; set; }
         public SocietyType SocietyType { get; set; }
+        public List<SpecialSociety> SpecialSocieties { get; set; } = new();
     }
 
     public enum WorldUnity
@@ -36,5 +37,21 @@
         Technocracy,
         Theocracy,
         Feudal
-    }   
+    }
+
+    public enum SpecialSociety
+    {
+        Bureaucracy,
+        Colony,
+        Cybercracy,
+        Matriarchy,
+        Meritocracy,
+        MilitaryGovernment,
+        Oligarchy,
+        Patriarchy,
+        Sanctuary,
+        Socialist,
+        Subjugated,
+        Utopia
+    }
 }

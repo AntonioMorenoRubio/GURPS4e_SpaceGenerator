@@ -145,9 +145,14 @@ namespace GeneratorLibrary.Models
             if (Society is not null)
             {
                 sb.AppendLine("Society:");
-                sb.AppendLine($"World Unity: {Society?.Unity}");
-                sb.AppendLine($"Interstellar Society Type: {Society?.InterstellarSocietyType}");
-                sb.AppendLine($"Society Type: {Society?.SocietyType}");
+                sb.AppendLine($"World Unity: {Society.Unity}");
+                sb.AppendLine($"Interstellar Society Type: {Society.InterstellarSocietyType}");
+                if (Society.SpecialSocieties.Count > 0)
+                {
+                    sb.Append($"Society Type: {Society.SocietyType} ({string.Join(',', Society.SpecialSocieties)})");
+                }
+                else
+                    sb.AppendLine($"Society Type: {Society.SocietyType}");
             }
 
             return sb.ToString();
