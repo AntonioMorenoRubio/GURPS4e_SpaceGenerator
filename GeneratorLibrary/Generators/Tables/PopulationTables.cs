@@ -103,8 +103,6 @@
             if (value == 0)
                 return 0;
 
-            double magnitude = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(value))));
-
             return Math.Round(value / 1000) * 1000;
         }
 
@@ -123,7 +121,7 @@
             }
         }
 
-        public static double GenerateColonyPopulation(double carryingCapacity, int affinity, int roll, int yearsSinceFounded = 0)
+        public static double GenerateColonyPopulation(int affinity, int roll, int yearsSinceFounded = 0)
         {
             // Modificador: +3 * affinity +1 por cada 10 años de la colonia
             int modifier = (affinity * 3) + (yearsSinceFounded / 10);
@@ -132,7 +130,7 @@
             if (finalRoll <= 25)
                 return 10_000;
 
-            Dictionary<int, double> initialPopulationValues = new Dictionary<int, double>()
+            Dictionary<int, double> initialPopulationValues = new()
             {
                 {25, 10_000 },
                 {26, 13_000 },
@@ -146,8 +144,8 @@
                 {34, 80_000 }
             };
 
-            if (initialPopulationValues.ContainsKey(finalRoll))
-                return initialPopulationValues[finalRoll];
+            if (initialPopulationValues.TryGetValue(finalRoll, out double value))
+                return value;
 
             int e10 = 0;
 

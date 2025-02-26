@@ -42,13 +42,11 @@ namespace GeneratorLibrary.Generators
             roll1 = _diceRoller.Roll();
             atmosphere.Characteristics = AtmosphereTables.GenerateCharacteristics(world.Type.Size, world.Type.SubType, roll1);
 
-            if (atmosphere.Characteristics.Contains(AtmosphereCharacteristic.Marginal))
+            if (atmosphere.Characteristics.Remove(AtmosphereCharacteristic.Marginal))
             {
-                atmosphere.Characteristics.Remove(AtmosphereCharacteristic.Marginal);
                 roll1 = _diceRoller.Roll();
                 atmosphere.MarginalAtmosphere = AtmosphereTables.GenerateMarginalAtmosphere(roll1);
 
-                roll1 = _diceRoller.Roll();
                 Atmosphere? atm = AtmosphereTables.ApplyMarginalAtmosphere(atmosphere, _randomProvider);
                 if (atm is not null)
                     atmosphere = atm;
@@ -118,11 +116,12 @@ namespace GeneratorLibrary.Generators
             world.ResourcesHabitability = resourcesHabitability;
 
             //STEP 8: Settlement Type
-            SettlementData settlementData = new SettlementData();
+            //There are no rules in the manual (S89-90), so we have to 'make up' some rules.
+            SettlementData settlementData = new();
             roll1 = DiceRoller.Instance.Roll(1);
-            roll2 = DiceRoller.Instance.Roll();
-            settlementData.IsInClaimedSpace = roll1 / 2 == 0 ? true : false;
-            SettlementType settlementType = (roll2 == 3 || roll2 == 4) ? SettlementType.Homeworld : SettlementDataTables.DetermineSettlementType
+            roll2 = DiceRoller.Instance.Roll(1);
+            settlementData.IsInClaimedSpace = roll1 % 2 == 0;
+            settlementData.Type = (roll2 == 3 || roll2 == 4) ? SettlementType.Homeworld : SettlementDataTables.DetermineSettlementType
             (
                 world.ResourcesHabitability.Affinity,
                 settlementData.IsInClaimedSpace,
@@ -171,13 +170,13 @@ namespace GeneratorLibrary.Generators
                     break;
                 case SettlementType.Colony:
                     roll1 = DiceRoller.Instance.Roll(3);
-                    population.CurrentPopulation = PopulationTables.GenerateColonyPopulation(population.CarryingCapacity, world.TechLevel.TL, roll1);
+                    population.CurrentPopulation = PopulationTables.GenerateColonyPopulation(world.TechLevel.TL, roll1);
                     break;
                 case SettlementType.Outpost:
                     roll1 = DiceRoller.Instance.Roll(3);
                     population.CurrentPopulation = PopulationTables.GenerateOutpostPopulation(roll1);
                     break;
-                default:    //Uninhabited no necesita población
+                default:
                     break;
             }
 

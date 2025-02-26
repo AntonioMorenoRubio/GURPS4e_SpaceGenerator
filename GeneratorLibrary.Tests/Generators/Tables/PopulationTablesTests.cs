@@ -87,14 +87,14 @@ namespace GeneratorLibrary.Tests.Generators.Tables
         }
 
         [Theory]
-        [InlineData(1_000_000, 3, 3, 50, 10_000)]  // Baja afinidad, mínimo dado, colonia reciente
-        [InlineData(1_000_000, 3, 18, 50, 50_000)] // Baja afinidad, máximo dado
-        [InlineData(10_000_000, 7, 3, 500, 800_000_000)]  // Alta afinidad, mínimo dado, colonia antigua
-        [InlineData(10_000_000, 7, 18, 500, 25_000_000_000)] // Alta afinidad, máximo dado
-        public void GenerateColonyPopulation_ShouldReturnExpectedPopulation(double carryingCapacity, int affinity, int roll, int yearsSinceFounded, double expectedPopulation)
+        [InlineData(3, 3, 50, 10_000)]  // Baja afinidad, mínimo dado, colonia reciente
+        [InlineData(3, 18, 50, 50_000)] // Baja afinidad, máximo dado
+        [InlineData(7, 3, 500, 800_000_000)]  // Alta afinidad, mínimo dado, colonia antigua
+        [InlineData(7, 18, 500, 25_000_000_000)] // Alta afinidad, máximo dado
+        public void GenerateColonyPopulation_ShouldReturnExpectedPopulation(int affinity, int roll, int yearsSinceFounded, double expectedPopulation)
         {
             // Act
-            double result = PopulationTables.GenerateColonyPopulation(carryingCapacity, affinity, roll, yearsSinceFounded);
+            double result = PopulationTables.GenerateColonyPopulation(affinity, roll, yearsSinceFounded);
 
             // Assert
             Assert.Equal(expectedPopulation, result);
