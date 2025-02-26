@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using GeneratorLibrary.Generators.Tables;
 
@@ -16,6 +17,7 @@ namespace GeneratorLibrary.Models
         //Social Parameters
         public SettlementData? SettlementData { get; set; } = null;
         public TechLevel? TechLevel { get; set; } = null;
+        public Population? Population { get; set; } = null;
 
         public World() { }
 
@@ -131,6 +133,10 @@ namespace GeneratorLibrary.Models
                     sb.AppendLine($"Tech Status: {TechLevel?.Status}");
                     break;
             }
+
+            //STEP 10: Population
+            sb.AppendLine("Population:");
+            sb.AppendLine($"Carrying Capacity: {Population?.CarryingCapacity.ToString("N0", CultureInfo.CurrentCulture)}");
 
             return sb.ToString();
         }

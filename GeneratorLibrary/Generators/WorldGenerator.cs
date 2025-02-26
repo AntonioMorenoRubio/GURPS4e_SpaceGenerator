@@ -145,6 +145,26 @@ namespace GeneratorLibrary.Generators
 
             world.TechLevel = techLevel;
 
+            //STEP 10: Population
+            Population population = new();
+
+            if (world.Type.SubType is WorldSubType.GasGiant)
+            {
+
+            }
+            else if (world.Type.SubType is WorldSubType.AsteroidBelt)
+                population.CarryingCapacity = PopulationTables.CalculateAsteroidCarryingCapacity(
+                    world.TechLevel.TL,
+                    world.ResourcesHabitability.Affinity);
+            else
+                population.CarryingCapacity = PopulationTables.CalculateWorldCarryingCapacity(
+                    world.TechLevel.TL,
+                    world.ResourcesHabitability.Affinity,
+                    world.Characteristics?.Diameter);
+
+
+            world.Population = population;
+
             return world;
         }
     }
