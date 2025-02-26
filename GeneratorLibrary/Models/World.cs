@@ -18,6 +18,7 @@ namespace GeneratorLibrary.Models
         public SettlementData? SettlementData { get; set; } = null;
         public TechLevel? TechLevel { get; set; } = null;
         public Population? Population { get; set; } = null;
+        public Society? Society { get; set; } = null;
 
         public World() { }
 
@@ -139,6 +140,13 @@ namespace GeneratorLibrary.Models
             sb.AppendLine($"Carrying Capacity: {Population?.CarryingCapacity.ToString("N0", CultureInfo.CurrentCulture)}");
             sb.AppendLine($"Current Population: {Population?.CurrentPopulation.ToString("N0", CultureInfo.CurrentCulture)}");
             sb.AppendLine($"Population Rating (PR): {Population?.PopulationRating}");
+
+            //STEP 11: Society Type
+            if (Society is not null)
+            {
+                sb.AppendLine("Society:");
+                sb.AppendLine($"World Unity: {Society?.Unity}");
+            }
 
             return sb.ToString();
         }

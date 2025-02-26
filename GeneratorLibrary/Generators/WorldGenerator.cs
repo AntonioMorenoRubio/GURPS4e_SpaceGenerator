@@ -184,6 +184,21 @@ namespace GeneratorLibrary.Generators
 
             world.Population = population;
 
+            //STEP 11: Society Type
+            if (world.SettlementData.Type is not SettlementType.Uninhabited)
+            {
+                if (world.TechLevel.TL <= 7)
+                    roll1 = DiceRoller.Instance.Roll(1);
+                else
+                    roll1 = DiceRoller.Instance.Roll(2);
+                Society society = new()
+                {
+                    Unity = SocietyTypeTables.GenerateWorldUnity(roll1, world.Population.PopulationRating)
+                };
+
+                world.Society = society;
+            }
+
             return world;
         }
     }
