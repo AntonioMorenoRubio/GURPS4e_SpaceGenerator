@@ -5,6 +5,42 @@ namespace GeneratorLibrary.Tests.Generators.Tables
     public class PopulationTablesTests
     {
         [Theory]
+        [InlineData(1, 0)]
+        [InlineData(9, 0)]
+        [InlineData(10, 1)]
+        [InlineData(99, 1)]
+        [InlineData(100, 2)]
+        [InlineData(999, 2)]
+        [InlineData(1_000, 3)]
+        [InlineData(9_999, 3)]
+        [InlineData(10_000, 4)]
+        [InlineData(99_999, 4)]
+        [InlineData(100_000, 5)]
+        [InlineData(999_999, 5)]
+        [InlineData(1_000_000, 6)]
+        [InlineData(9_999_999, 6)]
+        [InlineData(10_000_000, 7)]
+        [InlineData(99_999_999, 7)]
+        [InlineData(100_000_000, 8)]
+        [InlineData(999_999_999, 8)]
+        [InlineData(1_000_000_000, 9)]
+        [InlineData(9_999_999_999, 9)]
+        [InlineData(10_000_000_000, 10)]
+        [InlineData(99_999_999_999, 10)]
+        [InlineData(100_000_000_000, 11)]
+        [InlineData(999_999_999_999, 11)]
+        [InlineData(1_000_000_000_000, 12)]
+        [InlineData(9_999_999_999_999, 12)]
+        public void CalculatePopulationRating_ReturnsCorrectPopulationRating(double population, int expected)
+        {
+            //Act
+            int actual = PopulationTables.CalculatePopulationRating(population);
+
+            //Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
         // Cinturón de Asteroides (multiplicador especial)
         [InlineData(8, 5, 15_000_000_000)] // TL8, Afinidad 5, Asteroides → 15B
         [InlineData(9, -2, 187_500_000)]   // TL9, Afinidad -2, Asteroides → 187.5M

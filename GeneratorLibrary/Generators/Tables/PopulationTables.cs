@@ -191,6 +191,17 @@
             return Math.Max(0, variedPopulation);
         }
 
+        public static int CalculatePopulationRating(double population)
+        {
+            int counter = 0;
 
+            while (population >= 10)
+            {
+                counter++;
+                population /= 10;
+            }
+
+            return counter;
+        }
     }
 }

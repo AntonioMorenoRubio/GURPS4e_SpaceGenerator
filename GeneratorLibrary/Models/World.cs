@@ -138,6 +138,7 @@ namespace GeneratorLibrary.Models
             sb.AppendLine("Population:");
             sb.AppendLine($"Carrying Capacity: {Population?.CarryingCapacity.ToString("N0", CultureInfo.CurrentCulture)}");
             sb.AppendLine($"Current Population: {Population?.CurrentPopulation.ToString("N0", CultureInfo.CurrentCulture)}");
+            sb.AppendLine($"Population Rating (PR): {Population?.PopulationRating}");
 
             return sb.ToString();
         }

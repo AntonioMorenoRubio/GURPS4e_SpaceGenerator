@@ -181,6 +181,8 @@ namespace GeneratorLibrary.Generators
                     break;
             }
 
+            population.PopulationRating = PopulationTables.CalculatePopulationRating(population.CurrentPopulation);
+
             world.Population = population;
 
             return world;

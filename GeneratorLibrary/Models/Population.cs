@@ -10,5 +10,6 @@ namespace GeneratorLibrary.Models
     {
         public double CarryingCapacity { get; set; }
         public double CurrentPopulation { get; set; }
+        public int PopulationRating { get; set; }
     }
 }
