@@ -172,6 +172,7 @@ namespace GeneratorLibrary.Models
             {
                 sb.AppendLine("Economics:");
                 sb.AppendLine($"Base Per-Capita Income: ${Economics.BasePerCapitaIncome.ToString("N2", CultureInfo.CurrentCulture)}");
+                sb.AppendLine($"Income Modifiers: {string.Join(';', Economics.IncomeModifiers)}");
             }
 
 

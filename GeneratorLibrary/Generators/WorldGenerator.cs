@@ -278,8 +278,10 @@ namespace GeneratorLibrary.Generators
                 //STEP 13: Economics
                 Economics economics = new Economics
                 {
-                    BasePerCapitaIncome = EconomicsTables.GetBasePerCapitaIncome(world.TechLevel.TL)
+                    BasePerCapitaIncome = EconomicsTables.GetBasePerCapitaIncome(world.TechLevel.TL),
+                    IncomeModifiers = EconomicsTables.GetIncomeModifiers(world.ResourcesHabitability.Affinity, world.Population.PopulationRating)
                 };
+
 
                 world.Economics = economics;
             }

@@ -4,6 +4,32 @@ namespace GeneratorLibrary.Tests.Generators.Tables
 {
     public class EconomicsTablesTests
     {
+        public static IEnumerable<object[]> IncomeModifiersTestData()
+        {
+            for (int affinity = -5; affinity <= 10; affinity++)
+                for (int pr = 0; pr <= 12; pr++)
+                {
+                    double expectedAffinityModifier = affinity switch
+                    {
+                        10 => 1.4,
+                        9 => 1.2,
+                        >= 7 and <= 8 => 1.0,
+                        >= 4 and <= 6 => 0.9,
+                        >= 1 and <= 3 => 0.8,
+                        _ => 0.7
+                    };
+
+                    double expectedPopulationModifier = pr switch
+                    {
+                        >= 6 => 1.0,
+                        5 => 0.9,
+                        _ => 0.8
+                    };
+
+                    yield return new object[] { affinity, pr, expectedAffinityModifier, expectedPopulationModifier };
+                }
+        }
+
         [Theory]
         [InlineData(12, 130_000)]
         [InlineData(11, 97_000)]
@@ -25,6 +51,19 @@ namespace GeneratorLibrary.Tests.Generators.Tables
 
             // Assert
             Assert.Equal(expectedIncome, actual);
+        }
+
+        [Theory]
+        [MemberData(nameof(IncomeModifiersTestData))]
+        public void GetIncomeModifiers_ShouldReturnCorrectModifiers(int affinity, int populationRating, double expectedAffinity, double expectedPopulation)
+        {
+            // Act
+            var result = EconomicsTables.GetIncomeModifiers(affinity, populationRating);
+
+            // Assert
+            Assert.Equal(2, result.Count);
+            Assert.Equal(expectedAffinity, result[0]);
+            Assert.Equal(expectedPopulation, result[1]);
         }
     }
 }
