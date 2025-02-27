@@ -274,6 +274,14 @@ namespace GeneratorLibrary.Generators
 
                     world.ControlRating = controlRating;
                 }
+
+                //STEP 13: Economics
+                Economics economics = new Economics
+                {
+                    BasePerCapitaIncome = EconomicsTables.GetBasePerCapitaIncome(world.TechLevel.TL)
+                };
+
+                world.Economics = economics;
             }
 
             return world;

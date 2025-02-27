@@ -20,6 +20,7 @@ namespace GeneratorLibrary.Models
         public Population? Population { get; set; } = null;
         public Society? Society { get; set; } = null;
         public ControlRating? ControlRating { get; set; } = null;
+        public Economics? Economics { get; set; } = null;
 
         public World() { }
 
@@ -165,6 +166,14 @@ namespace GeneratorLibrary.Models
                 sb.AppendLine($"Minimum and Maximum CR: {ControlRating.minMaxCR}");
                 sb.AppendLine($"Final CR: {ControlRating.CR}");
             }
+
+            //STEP 13: Economics
+            if (Economics is not null)
+            {
+                sb.AppendLine("Economics:");
+                sb.AppendLine($"Base Per-Capita Income: ${Economics.BasePerCapitaIncome.ToString("N2", CultureInfo.CurrentCulture)}");
+            }
+
 
             return sb.ToString();
         }
