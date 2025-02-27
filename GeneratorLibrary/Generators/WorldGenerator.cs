@@ -254,6 +254,26 @@ namespace GeneratorLibrary.Generators
 
                 world.Society = society;
 
+                //STEP 12 Control Rating
+                if (world.Society is not null)
+                {
+                    ControlRating controlRating = new();
+
+                    controlRating.CRList.Add(ControlRatingTables.GetControlRatingRange(world.Society.SocietyType));
+                    if (world.Society.SpecialSocieties.Count > 0)
+                        foreach (var specialSociety in world.Society.SpecialSocieties)
+                            controlRating.CRList.Add(ControlRatingTables.GetControlRatingRange(specialSociety));
+
+                    controlRating.minMaxCR = (
+                        controlRating.CRList.Max(x => x.Item1),
+                        controlRating.CRList.Max(x => x.Item2)
+                        );
+
+                    roll1 = DiceRoller.Instance.Roll(2);
+                    controlRating.CR = ControlRatingTables.GenerateControlRatingInRange(controlRating.minMaxCR.Min, controlRating.minMaxCR.Max, roll1);
+
+                    world.ControlRating = controlRating;
+                }
             }
 
             return world;

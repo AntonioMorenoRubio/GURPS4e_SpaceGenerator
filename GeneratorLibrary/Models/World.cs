@@ -19,6 +19,7 @@ namespace GeneratorLibrary.Models
         public TechLevel? TechLevel { get; set; } = null;
         public Population? Population { get; set; } = null;
         public Society? Society { get; set; } = null;
+        public ControlRating? ControlRating { get; set; } = null;
 
         public World() { }
 
@@ -149,10 +150,20 @@ namespace GeneratorLibrary.Models
                 sb.AppendLine($"Interstellar Society Type: {Society.InterstellarSocietyType}");
                 if (Society.SpecialSocieties.Count > 0)
                 {
-                    sb.Append($"Society Type: {Society.SocietyType} ({string.Join(',', Society.SpecialSocieties)})");
+                    sb.AppendLine($"Society Type: {Society.SocietyType} ({string.Join(',', Society.SpecialSocieties)})");
                 }
                 else
                     sb.AppendLine($"Society Type: {Society.SocietyType}");
+            }
+
+            //STEP 12: Control Rating
+            if (ControlRating is not null)
+            {
+                sb.AppendLine("Control Rating:");
+                sb.Append("Control Rating List:");
+                sb.AppendLine($"{string.Join(',', ControlRating.CRList)}");
+                sb.AppendLine($"Minimum and Maximum CR: {ControlRating.minMaxCR}");
+                sb.AppendLine($"Final CR: {ControlRating.CR}");
             }
 
             return sb.ToString();
