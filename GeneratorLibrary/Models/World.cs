@@ -174,7 +174,8 @@ namespace GeneratorLibrary.Models
                 sb.AppendLine($"Base Per-Capita Income: ${Economics.BasePerCapitaIncome.ToString("N2", CultureInfo.CurrentCulture)}");
                 sb.AppendLine($"Income Modifiers: {string.Join(';', Economics.IncomeModifiers)}");
                 sb.AppendLine($"Final Per-Capita Income: ${Economics.BasePerCapitaIncome.ToString("N2", CultureInfo.CurrentCulture)}");
-                sb.AppendLine($"Typical Wealth Level: ${Economics.TypicalWealthLevel}");
+                sb.AppendLine($"Typical Wealth Level: {Economics.TypicalWealthLevel}");
+                sb.AppendLine($"Economic Volume: ${Economics.EconomicVolume.ToString("N2", CultureInfo.CurrentCulture)}");
             }
 
             return sb.ToString();

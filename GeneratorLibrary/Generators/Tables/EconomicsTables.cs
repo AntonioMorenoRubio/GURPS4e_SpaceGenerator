@@ -54,7 +54,7 @@ namespace GeneratorLibrary.Generators.Tables
 
         public static decimal GetFinalPerCapitaIncome(decimal basePerCapitaIncome, List<decimal> modifiers, double carryingCapacity, double population)
         {
-            decimal finalPerCapitaIncome = modifiers.Aggregate(basePerCapitaIncome, (income,modifier) => income * modifier);
+            decimal finalPerCapitaIncome = modifiers.Aggregate(basePerCapitaIncome, (income, modifier) => income * modifier);
 
             if (carryingCapacity < population)
                 finalPerCapitaIncome *= (decimal)(carryingCapacity / population);
@@ -70,5 +70,10 @@ namespace GeneratorLibrary.Generators.Tables
             >= 0.1m => WealthLevel.Poor,
             _ => WealthLevel.DeadBroke
         };
+
+        public static decimal CalculateEconomicVolume(decimal finalPerCapitaIncome, double population)
+        {
+            return (finalPerCapitaIncome * (decimal)population).RoundToSignificantFigures(2);
+        }
     }
 }

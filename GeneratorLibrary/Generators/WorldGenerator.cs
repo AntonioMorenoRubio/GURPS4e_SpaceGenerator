@@ -289,6 +289,7 @@ namespace GeneratorLibrary.Generators
                     world.Population.CurrentPopulation);
 
                 economics.TypicalWealthLevel = EconomicsTables.GetTypicalWealthLevel(economics.FinalPerCapitaIncome, economics.BasePerCapitaIncome);
+                economics.EconomicVolume = EconomicsTables.CalculateEconomicVolume(economics.FinalPerCapitaIncome, world.Population.CurrentPopulation);
 
                 world.Economics = economics;
             }

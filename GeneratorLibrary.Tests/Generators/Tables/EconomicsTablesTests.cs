@@ -112,5 +112,26 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             Assert.Equal(expectedWealth, result);
         }
 
+        [Theory]
+        [InlineData(10_000, 1_000_000, 10_000_000_000)]  // 10k * 1M → 10B
+        [InlineData(50_000, 2_000_000, 100_000_000_000)] // 50k * 2M → 100B
+        [InlineData(100_000, 10_000_000, 1_000_000_000_000)] // 100k * 10M → 1T
+        [InlineData(250_000, 500_000, 120_000_000_000)] // 250k * 500k → 120B
+        [InlineData(1_000_000, 100_000, 100_000_000_000)] // 1M * 100k → 100B
+        [InlineData(10_000, 10, 100_000)] // 10k * 10 → 100k
+        [InlineData(5_000, 50, 250_000)] // 5k * 50 → 250k
+        [InlineData(0, 1_000_000, 0)] // Ingreso 0 → Volumen 0
+        [InlineData(10_000, 0, 0)] // Población 0 → Volumen 0
+        [InlineData(75_000, 4_000_000, 300_000_000_000)] // 75k * 4M → 300B
+
+        public void GetEconomicVolume_ShouldReturnExpectedValue(decimal finalPerCapitaIncome, double population, decimal expectedVolume)
+        {
+            // Act
+            decimal result = EconomicsTables.CalculateEconomicVolume(finalPerCapitaIncome, population);
+
+            // Assert
+            Assert.Equal(expectedVolume, result);
+        }
+
     }
 }
