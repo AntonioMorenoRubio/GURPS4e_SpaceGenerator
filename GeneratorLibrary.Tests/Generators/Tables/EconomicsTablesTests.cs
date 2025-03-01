@@ -1,4 +1,5 @@
 ﻿using GeneratorLibrary.Generators.Tables;
+using GeneratorLibrary.Models;
 
 namespace GeneratorLibrary.Tests.Generators.Tables
 {
@@ -85,6 +86,30 @@ namespace GeneratorLibrary.Tests.Generators.Tables
 
             // Assert
             Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData(140_000, 100_000, WealthLevel.Comfortable)] // 1.4x
+        [InlineData(139_999, 100_000, WealthLevel.Average)]     // Justo debajo de 1.4x
+        [InlineData(100_000, 100_000, WealthLevel.Average)]     // 1.0x
+        [InlineData(73_000, 100_000, WealthLevel.Average)]      // 0.73x
+        [InlineData(72_999, 100_000, WealthLevel.Struggling)]   // Justo debajo de 0.73x
+        [InlineData(50_000, 100_000, WealthLevel.Struggling)]   // 0.5x
+        [InlineData(32_000, 100_000, WealthLevel.Struggling)]   // 0.32x
+        [InlineData(31_999, 100_000, WealthLevel.Poor)]         // Justo debajo de 0.32x
+        [InlineData(20_000, 100_000, WealthLevel.Poor)]         // 0.2x
+        [InlineData(10_000, 100_000, WealthLevel.Poor)]         // 0.1x
+        [InlineData(9_999, 100_000, WealthLevel.DeadBroke)]     // Justo debajo de 0.1x
+        [InlineData(5_000, 100_000, WealthLevel.DeadBroke)]     // 0.05x
+        [InlineData(0, 100_000, WealthLevel.DeadBroke)]         // 0x
+
+        public void GetTypicalWealthLevel_ShouldReturnExpectedWealth(decimal finalPerCapitaIncome, decimal basePerCapitaIncome, WealthLevel expectedWealth)
+        {
+            // Act
+            WealthLevel result = EconomicsTables.GetTypicalWealthLevel(finalPerCapitaIncome, basePerCapitaIncome);
+
+            // Assert
+            Assert.Equal(expectedWealth, result);
         }
 
     }

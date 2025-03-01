@@ -11,5 +11,15 @@ namespace GeneratorLibrary.Models
         public decimal BasePerCapitaIncome { get; set; }
         public List<decimal> IncomeModifiers { get; set; } = new();
         public decimal FinalPerCapitaIncome { get; set; } = new();
+        public WealthLevel TypicalWealthLevel { get; set; }
+    }
+
+    public enum WealthLevel
+    {
+        DeadBroke,
+        Poor,
+        Struggling,
+        Average,
+        Comfortable
     }
 }

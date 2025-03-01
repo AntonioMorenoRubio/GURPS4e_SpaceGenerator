@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using GeneratorLibrary.Models;
 using GeneratorLibrary.Utils;
 
 namespace GeneratorLibrary.Generators.Tables
@@ -60,5 +61,14 @@ namespace GeneratorLibrary.Generators.Tables
 
             return finalPerCapitaIncome.RoundToSignificantFigures(2);
         }
+
+        public static WealthLevel GetTypicalWealthLevel(decimal finalPerCapitaIncome, decimal basePerCapitaIncome) => (finalPerCapitaIncome / basePerCapitaIncome) switch
+        {
+            >= 1.4m => WealthLevel.Comfortable,
+            >= 0.73m => WealthLevel.Average,
+            >= 0.32m => WealthLevel.Struggling,
+            >= 0.1m => WealthLevel.Poor,
+            _ => WealthLevel.DeadBroke
+        };
     }
 }
