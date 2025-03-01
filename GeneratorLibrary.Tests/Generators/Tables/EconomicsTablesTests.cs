@@ -9,25 +9,35 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             for (int affinity = -5; affinity <= 10; affinity++)
                 for (int pr = 0; pr <= 12; pr++)
                 {
-                    double expectedAffinityModifier = affinity switch
+                    decimal expectedAffinityModifier = affinity switch
                     {
-                        10 => 1.4,
-                        9 => 1.2,
-                        >= 7 and <= 8 => 1.0,
-                        >= 4 and <= 6 => 0.9,
-                        >= 1 and <= 3 => 0.8,
-                        _ => 0.7
+                        10 => 1.4m,
+                        9 => 1.2m,
+                        >= 7 and <= 8 => 1.0m,
+                        >= 4 and <= 6 => 0.9m,
+                        >= 1 and <= 3 => 0.8m,
+                        _ => 0.7m
                     };
 
-                    double expectedPopulationModifier = pr switch
+                    decimal expectedPopulationModifier = pr switch
                     {
-                        >= 6 => 1.0,
-                        5 => 0.9,
-                        _ => 0.8
+                        >= 6 => 1.0m,
+                        5 => 0.9m,
+                        _ => 0.8m
                     };
 
                     yield return new object[] { affinity, pr, expectedAffinityModifier, expectedPopulationModifier };
                 }
+        }
+
+        public static IEnumerable<object[]> GetFinalPerCapitaIncomeTestData()
+        {
+            yield return new object[] { 31_000m, new List<decimal> { 1.0m }, 1_000_000, 1_000_000, 31_000m }; // Sin modificadores
+            yield return new object[] { 31_000m, new List<decimal> { 1.2m, 0.9m }, 1_000_000, 1_000_000, 33_000m }; // Modificadores combinados
+            yield return new object[] { 31_000m, new List<decimal> { 0.7m }, 1_000_000, 1_000_000, 22_000m }; // Modificador negativo (-30%)
+            yield return new object[] { 31_000m, new List<decimal> { 1.0m }, 1_000_000, 2_000_000, 16_000m }; // Población > Capacidad
+            yield return new object[] { 31_000m, new List<decimal> { 1.4m }, 2_000_000, 1_000_000, 43_000m }; // Capacidad > Población
+            yield return new object[] { 31_000m, new List<decimal> { 1.0m }, 1_000_000, 0, 31_000m }; // Población 0
         }
 
         [Theory]
@@ -55,7 +65,7 @@ namespace GeneratorLibrary.Tests.Generators.Tables
 
         [Theory]
         [MemberData(nameof(IncomeModifiersTestData))]
-        public void GetIncomeModifiers_ShouldReturnCorrectModifiers(int affinity, int populationRating, double expectedAffinity, double expectedPopulation)
+        public void GetIncomeModifiers_ShouldReturnCorrectModifiers(int affinity, int populationRating, decimal expectedAffinity, decimal expectedPopulation)
         {
             // Act
             var result = EconomicsTables.GetIncomeModifiers(affinity, populationRating);
@@ -65,5 +75,17 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             Assert.Equal(expectedAffinity, result[0]);
             Assert.Equal(expectedPopulation, result[1]);
         }
+
+        [Theory]
+        [MemberData(nameof(GetFinalPerCapitaIncomeTestData))]
+        public void GetFinalPerCapitaIncome_ShouldReturnExpected(decimal baseIncome, List<decimal> modifiers, double carryingCapacity, double population, decimal expected)
+        {
+            // Act
+            var result = EconomicsTables.GetFinalPerCapitaIncome(baseIncome, modifiers, carryingCapacity, population);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace GeneratorLibrary.Generators.Tables
+﻿using System.Linq;
+using GeneratorLibrary.Utils;
+
+namespace GeneratorLibrary.Generators.Tables
 {
     public static class EconomicsTables
     {
@@ -19,33 +22,43 @@
             _ => 7_500
         };
 
-        public static List<double> GetIncomeModifiers(int affinity, int populationRating)
+        public static List<decimal> GetIncomeModifiers(int affinity, int populationRating)
         {
-            List<double> modifiers = new();
+            List<decimal> modifiers = new();
 
-            double affinityModifier = affinity switch
+            decimal affinityModifier = affinity switch
             {
-                10 => 1.4,  // +40%
-                9 => 1.2,   // +20%
-                >= 7 and <= 8 => 1.0, // +0%
-                >= 4 and <= 6 => 0.9, // -10%
-                >= 1 and <= 3 => 0.8, // -20%
-                <= 0 => 0.7,  // -30%
-                _ => 1.0
+                10 => 1.4m,  // +40%
+                9 => 1.2m,   // +20%
+                >= 7 and <= 8 => 1.0m, // +0%
+                >= 4 and <= 6 => 0.9m, // -10%
+                >= 1 and <= 3 => 0.8m, // -20%
+                <= 0 => 0.7m,  // -30%
+                _ => 1.0m
             };
 
             // Aplicar modificadores según PR
-            double populationModifier = populationRating switch
+            decimal populationModifier = populationRating switch
             {
-                >= 6 => 1.0, // +0%
-                5 => 0.9,    // -10%
-                <= 4 => 0.8, // -20%
+                >= 6 => 1.0m, // +0%
+                5 => 0.9m,    // -10%
+                <= 4 => 0.8m, // -20%
             };
 
             modifiers.Add(affinityModifier);
             modifiers.Add(populationModifier);
 
             return modifiers;
+        }
+
+        public static decimal GetFinalPerCapitaIncome(decimal basePerCapitaIncome, List<decimal> modifiers, double carryingCapacity, double population)
+        {
+            decimal finalPerCapitaIncome = modifiers.Aggregate(basePerCapitaIncome, (income,modifier) => income * modifier);
+
+            if (carryingCapacity < population)
+                finalPerCapitaIncome *= (decimal)(carryingCapacity / population);
+
+            return finalPerCapitaIncome.RoundToSignificantFigures(2);
         }
     }
 }

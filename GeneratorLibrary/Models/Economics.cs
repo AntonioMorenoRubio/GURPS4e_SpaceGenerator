@@ -9,6 +9,7 @@ namespace GeneratorLibrary.Models
     public record Economics
     {
         public decimal BasePerCapitaIncome { get; set; }
-        public List<double> IncomeModifiers { get; set; } = new();
+        public List<decimal> IncomeModifiers { get; set; } = new();
+        public decimal FinalPerCapitaIncome { get; set; } = new();
     }
 }

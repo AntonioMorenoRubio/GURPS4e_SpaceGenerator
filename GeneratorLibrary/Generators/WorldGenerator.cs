@@ -282,6 +282,12 @@ namespace GeneratorLibrary.Generators
                     IncomeModifiers = EconomicsTables.GetIncomeModifiers(world.ResourcesHabitability.Affinity, world.Population.PopulationRating)
                 };
 
+                economics.FinalPerCapitaIncome = EconomicsTables.GetFinalPerCapitaIncome(
+                    economics.BasePerCapitaIncome,
+                    economics.IncomeModifiers,
+                    world.Population.CarryingCapacity,
+                    world.Population.CurrentPopulation);
+
 
                 world.Economics = economics;
             }
