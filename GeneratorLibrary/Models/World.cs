@@ -187,6 +187,21 @@ namespace GeneratorLibrary.Models
                     sb.AppendLine($"Spaceport Classes: {string.Join(',', Installations.Spaceports)}");
                 else
                     sb.AppendLine($"Spaceport Class: {Installations.Spaceports[0]}");
+
+                if (Installations.Facilities.Count > 1)
+                {
+                    sb.AppendLine($"Installations:");
+                    foreach (var item in Installations.Facilities)
+                    {
+
+                        if (item.PR is not null)
+                            sb.AppendLine($"{item.Type}, PR: {item.PR}");
+                        else
+                            sb.AppendLine($"{item.Type}");
+                    }
+                }
+                else
+                    sb.AppendLine($"No installations.");
             }
             return sb.ToString();
         }

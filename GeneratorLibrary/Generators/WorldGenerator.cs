@@ -273,34 +273,37 @@ namespace GeneratorLibrary.Generators
                     controlRating.CR = ControlRatingTables.GenerateControlRatingInRange(controlRating.minMaxCR.Min, controlRating.minMaxCR.Max, roll1);
 
                     world.ControlRating = controlRating;
+
+
+                    //STEP 13: Economics
+                    Economics economics = new Economics
+                    {
+                        BasePerCapitaIncome = EconomicsTables.GetBasePerCapitaIncome(world.TechLevel.TL),
+                        IncomeModifiers = EconomicsTables.GetIncomeModifiers(world.ResourcesHabitability.Affinity, world.Population.PopulationRating)
+                    };
+
+                    economics.FinalPerCapitaIncome = EconomicsTables.GetFinalPerCapitaIncome(
+                        economics.BasePerCapitaIncome,
+                        economics.IncomeModifiers,
+                        world.Population.CarryingCapacity,
+                        world.Population.CurrentPopulation);
+
+                    economics.TypicalWealthLevel = EconomicsTables.GetTypicalWealthLevel(economics.FinalPerCapitaIncome, economics.BasePerCapitaIncome);
+                    economics.EconomicVolume = EconomicsTables.CalculateEconomicVolume(economics.FinalPerCapitaIncome, world.Population.CurrentPopulation);
+
+                    world.Economics = economics;
+
+                    //STEP 14: Bases and Installations
+                    Installations installations = new();
+                    roll1 = DiceRoller.Instance.Roll();
+                    roll2 = DiceRoller.Instance.Roll();
+                    int[] rolls = [roll1, roll2, DiceRoller.Instance.Roll(), DiceRoller.Instance.Roll(), DiceRoller.Instance.Roll()];
+                    installations.Spaceports = InstallationsTables.DetermineSpaceportClasses(world.Population.PopulationRating, rolls);
+                    if (world.Population.PopulationRating > 0)
+                        installations.Facilities = InstallationsTables.GenerateFacilities(world.Population.PopulationRating, world.ControlRating.CR, world.TechLevel.TL, installations.Spaceports);
+
+                    world.Installations = installations;
                 }
-
-                //STEP 13: Economics
-                Economics economics = new Economics
-                {
-                    BasePerCapitaIncome = EconomicsTables.GetBasePerCapitaIncome(world.TechLevel.TL),
-                    IncomeModifiers = EconomicsTables.GetIncomeModifiers(world.ResourcesHabitability.Affinity, world.Population.PopulationRating)
-                };
-
-                economics.FinalPerCapitaIncome = EconomicsTables.GetFinalPerCapitaIncome(
-                    economics.BasePerCapitaIncome,
-                    economics.IncomeModifiers,
-                    world.Population.CarryingCapacity,
-                    world.Population.CurrentPopulation);
-
-                economics.TypicalWealthLevel = EconomicsTables.GetTypicalWealthLevel(economics.FinalPerCapitaIncome, economics.BasePerCapitaIncome);
-                economics.EconomicVolume = EconomicsTables.CalculateEconomicVolume(economics.FinalPerCapitaIncome, world.Population.CurrentPopulation);
-
-                world.Economics = economics;
-
-                //STEP 14: Bases and Installations
-                Installations installations = new();
-                roll1 = DiceRoller.Instance.Roll();
-                roll2 = DiceRoller.Instance.Roll();
-                int[] rolls = [roll1, roll2, DiceRoller.Instance.Roll(), DiceRoller.Instance.Roll(), DiceRoller.Instance.Roll()];
-                installations.Spaceports = InstallationsTables.DetermineSpaceportClasses(world.Population.PopulationRating, rolls);
-
-                world.Installations = installations;
             }
 
             return world;
