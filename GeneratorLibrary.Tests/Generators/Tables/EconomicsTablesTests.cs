@@ -133,5 +133,40 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             Assert.Equal(expectedVolume, result);
         }
 
+        [Theory]
+        ///// FACTOR 0 (Siempre 0) /////
+        [InlineData(0, 1E12, 1E12, 10, 0)] // 1T y 1T con distancia 10
+        [InlineData(0, 1E13, 1E13, 100, 0)] // 10T y 10T con distancia 100
+
+        /////// FACTOR 0.01 /////
+        [InlineData(0.01, 1E12, 2E12, 10, 2E-3)] // Distancia corta
+        [InlineData(0.01, 5E12, 5E12, 50, 5E-3)] // Distancia media
+        [InlineData(0.01, 1E13, 1E13, 1000, 1E-3)] // Distancia muy larga
+
+        /////// FACTOR 0.1 /////
+        [InlineData(0.1, 5E11, 1E12, 1, 5E-2)] // Volumen medio, distancia corta
+        [InlineData(0.1, 5E11, 1E12, 10, 5E-3)] // Volumen medio, distancia corta
+        [InlineData(0.1, 5E12, 5E12, 50, 5E-2)] // Distancia media
+        [InlineData(0.1, 1E13, 1E13, 1000, 1E-2)] // Distancia muy larga
+
+        ///// FACTOR 1 /////
+        [InlineData(1, 1E11, 1E11, 1, 1E-2)] // Pequeña economía, corta distancia
+        [InlineData(1, 1E11, 1E11, 5, 2E-3)] // Pequeña economía, corta distancia
+        [InlineData(1, 1E12, 1E11, 1, 1E-1)] // Pequeña economía, corta distancia
+        [InlineData(1, 1E11, 1E12, 1, 1E-1)] // Pequeña economía, corta distancia
+        [InlineData(1, 1E12, 1E12, 1, 1E0)] // Pequeña economía, corta distancia
+        [InlineData(1, 1E12, 1E12, 10, 1E-1)] // Economía media, corta distancia
+        [InlineData(1, 1E13, 1E13, 100, 1E0)] // Gran economía, media distancia
+        [InlineData(1, 1E13, 1E13, 1000, 1E-1)] // Gran economía, distancia extrema
+        public void CalculateTradeVolumeInTrillionsOfMoney_ShouldReturnExpectedValue(
+    decimal factor, decimal world1EconomicVolume, decimal world2EconomicVolume, double distance, decimal expectedTradeVolume)
+        {
+            // Act
+            decimal result = EconomicsTables.CalculateTradeVolumeInTrillionsOfMoney(factor, world1EconomicVolume, world2EconomicVolume, distance);
+
+            // Assert
+            Assert.Equal(expectedTradeVolume, result);
+        }
+
     }
 }

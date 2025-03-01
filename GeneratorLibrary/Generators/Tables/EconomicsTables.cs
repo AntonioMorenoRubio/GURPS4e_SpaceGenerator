@@ -75,5 +75,13 @@ namespace GeneratorLibrary.Generators.Tables
         {
             return (finalPerCapitaIncome * (decimal)population).RoundToSignificantFigures(2);
         }
+
+        public static decimal CalculateTradeVolumeInTrillionsOfMoney(decimal factor, decimal world1EconomicVolume, decimal world2EconomicVolume, double distance)
+        {
+            decimal world1Trillions = world1EconomicVolume / 1_000_000_000_000m;
+            decimal world2Trillions = world2EconomicVolume / 1_000_000_000_000m;
+
+            return factor * world1Trillions * world2Trillions / (decimal)distance;
+        }
     }
 }
