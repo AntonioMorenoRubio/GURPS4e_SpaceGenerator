@@ -183,7 +183,10 @@ namespace GeneratorLibrary.Models
             if (Installations is not null)
             {
                 sb.AppendLine("Bases and Installations:");
-                sb.AppendLine($"Spaceport Class: {Installations.SpaceportClass}");
+                if (Installations.Spaceports.Count > 1)
+                    sb.AppendLine($"Spaceport Classes: {string.Join(',', Installations.Spaceports)}");
+                else
+                    sb.AppendLine($"Spaceport Class: {Installations.Spaceports[0]}");
             }
             return sb.ToString();
         }

@@ -8,7 +8,7 @@ namespace GeneratorLibrary.Models
 {
     public record Installations
     {
-        public SpaceportClass SpaceportClass { get; set; }
+        public List<SpaceportClass> Spaceports { get; set; } = new();
     }
 
     public enum SpaceportClass

@@ -296,7 +296,9 @@ namespace GeneratorLibrary.Generators
                 //STEP 14: Bases and Installations
                 Installations installations = new();
                 roll1 = DiceRoller.Instance.Roll();
-                installations.SpaceportClass = InstallationsTables.DetermineSpaceportClass(world.Population.PopulationRating, roll1);
+                roll2 = DiceRoller.Instance.Roll();
+                int[] rolls = [roll1, roll2, DiceRoller.Instance.Roll(), DiceRoller.Instance.Roll(), DiceRoller.Instance.Roll()];
+                installations.Spaceports = InstallationsTables.DetermineSpaceportClasses(world.Population.PopulationRating, rolls);
 
                 world.Installations = installations;
             }
