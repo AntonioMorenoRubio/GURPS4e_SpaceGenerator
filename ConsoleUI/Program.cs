@@ -17,7 +17,7 @@ for (int i = 0; i < 1000; i++)
 Console.WriteLine("Worlds generated!");
 Console.WriteLine();
 
-foreach (World w in worlds)
+foreach (World w in worlds.Where(x => x.Population?.CurrentPopulation > x.Population?.CarryingCapacity))
 {
     Console.WriteLine(w.ToString());
     Console.WriteLine();

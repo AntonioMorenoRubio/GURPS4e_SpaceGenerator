@@ -21,6 +21,7 @@ namespace GeneratorLibrary.Models
         public Society? Society { get; set; } = null;
         public ControlRating? ControlRating { get; set; } = null;
         public Economics? Economics { get; set; } = null;
+        public Installations? Installations { get; set; } = null;
 
         public World() { }
 
@@ -178,6 +179,12 @@ namespace GeneratorLibrary.Models
                 sb.AppendLine($"Economic Volume: ${Economics.EconomicVolume.ToString("N2", CultureInfo.CurrentCulture)}");
             }
 
+            //STEP 14: Bases and Installations
+            if (Installations is not null)
+            {
+                sb.AppendLine("Bases and Installations:");
+                sb.AppendLine($"Spaceport Class: {Installations.SpaceportClass}");
+            }
             return sb.ToString();
         }
     }

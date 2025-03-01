@@ -292,6 +292,13 @@ namespace GeneratorLibrary.Generators
                 economics.EconomicVolume = EconomicsTables.CalculateEconomicVolume(economics.FinalPerCapitaIncome, world.Population.CurrentPopulation);
 
                 world.Economics = economics;
+
+                //STEP 14: Bases and Installations
+                Installations installations = new();
+                roll1 = DiceRoller.Instance.Roll();
+                installations.SpaceportClass = InstallationsTables.DetermineSpaceportClass(world.Population.PopulationRating, roll1);
+
+                world.Installations = installations;
             }
 
             return world;
