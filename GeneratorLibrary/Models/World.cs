@@ -193,9 +193,11 @@ namespace GeneratorLibrary.Models
                     sb.AppendLine($"Installations:");
                     foreach (var item in Installations.Facilities)
                     {
-
                         if (item.PR is not null)
-                            sb.AppendLine($"{item.Type}, PR: {item.PR}");
+                            if (item.IsSecret)
+                                sb.AppendLine($"{item.Type}, PR: {item.PR} (Secret)");
+                            else
+                                sb.AppendLine($"{item.Type}, PR: {item.PR}");
                         else
                             sb.AppendLine($"{item.Type}");
                     }

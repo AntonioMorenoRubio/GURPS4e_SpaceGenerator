@@ -26,16 +26,11 @@ namespace GeneratorLibrary.Models
     {
         public FacilityType Type { get; set; }
         public int? PR { get; set; } = null;
+        public bool IsSecret = false;
 
-        public Facility(FacilityType facilityType)
+        public Facility()
         {
-            Type = facilityType;
-        }
 
-        public Facility(FacilityType facilityType, int? populationRating)
-        {
-            Type = facilityType;
-            PR = populationRating;
         }
     }
 
@@ -44,7 +39,7 @@ namespace GeneratorLibrary.Models
         AlienEnclave,
         BlackMarket,
         ColonialOffice,
-        CorporateHQ,
+        CorporateHeadquarters,
         CriminalBase,
         EspionageFacility,
         GovernmentResearchStation,
@@ -62,4 +57,22 @@ namespace GeneratorLibrary.Models
         SurveyBase,
         University
     }
+
+    public record EspionageFacility : Facility
+    {
+        public EspionageFacilityType SubType { get; set; }
+
+        public EspionageFacility()
+        {
+
+        }
+    }
+
+    public enum EspionageFacilityType
+    {
+        Civilian,
+        FriendlyMilitary,
+        EnemyMilitary
+    }
+
 }
