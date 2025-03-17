@@ -100,7 +100,8 @@
 
         private static double RoundToThousands(double value)
         {
-            if (value == 0)
+            const double _TOLERANCE = 1e-10;
+            if (Math.Abs(value) < _TOLERANCE)
                 return 0;
 
             return Math.Round(value / 1000) * 1000;
@@ -149,7 +150,7 @@
 
             int e10 = 0;
 
-            while (initialPopulationValues.ContainsKey(finalRoll) is false)
+            while (!initialPopulationValues.ContainsKey(finalRoll))
             {
                 e10++;
                 finalRoll -= 10;

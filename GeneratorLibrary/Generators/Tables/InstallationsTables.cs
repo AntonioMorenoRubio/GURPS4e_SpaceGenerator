@@ -145,7 +145,7 @@ namespace GeneratorLibrary.Generators.Tables
                 facilities.Add(pirateBase);
             }
 
-            // Prison - Check this last, as it requires no other installations except naval or patrol bases
+            // Prison - Checked last, as it requires no other installations except naval or patrol bases (S98)
 
             // Private Research Center
             if (DiceRoller.Instance.Roll(3, 0) <= (populationRating + 4))
@@ -206,7 +206,7 @@ namespace GeneratorLibrary.Generators.Tables
                 facilities.Add(university);
             }
 
-            // Prison - Check this last, as it requires no other installations except naval or patrol bases
+            // Prison - NOW WE CHECK IF IT CAN BE ADDED
             bool canHavePrison = facilities.Count == 0 ||
                                 (facilities.Count <= 2 &&
                                  facilities.All(f => f.Type == FacilityType.NavalBase || f.Type == FacilityType.PatrolBase));
@@ -219,11 +219,8 @@ namespace GeneratorLibrary.Generators.Tables
             }
 
             // Ensure no installation has PR higher than world's PR
-            foreach (Facility facility in facilities)
-            {
-                if (IsFacilityWithPR(facility.Type))
-                    facility.PR = Math.Min(facility.PR ?? 0, populationRating);
-            }
+            foreach (Facility facility in facilities.Where(f => f.PR > populationRating))
+                facility.PR = populationRating;
 
             // Ensure at most one installation has PR equal to world's PR
             if (populationRating > 0)
@@ -233,11 +230,11 @@ namespace GeneratorLibrary.Generators.Tables
                 {
                     // Keep only one with max PR, reduce others
                     Random random = new Random();
-                    int keepIndex = random.Next(highPRFacilities.Count);
+                    int highPRIndex = random.Next(highPRFacilities.Count);
 
                     for (int i = 0; i < highPRFacilities.Count; i++)
                     {
-                        if (i != keepIndex)
+                        if (i != highPRIndex)
                         {
                             highPRFacilities[i].PR = Math.Max(1, populationRating - 1);
                         }

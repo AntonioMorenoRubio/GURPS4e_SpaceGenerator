@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GeneratorLibrary.Models;
+﻿using GeneratorLibrary.Models;
 
 namespace GeneratorLibrary.Generators.Tables
 {
-    public class ControlRatingTables
+    public static class ControlRatingTables
     {
         public static (int MinCR, int MaxCR) GetControlRatingRange(SocietyType type) => type switch
         {

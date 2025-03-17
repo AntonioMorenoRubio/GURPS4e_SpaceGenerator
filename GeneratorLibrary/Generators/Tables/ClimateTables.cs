@@ -4,7 +4,6 @@ namespace GeneratorLibrary.Generators.Tables
 {
     public static class ClimateTables
     {
-
         public static double GenerateAverageSurfaceTemperatureInKelvinsByWorldType(WorldSize size, WorldSubType subType)
         {
             // Definir rangos y pasos según el tipo de mundo
@@ -83,9 +82,12 @@ namespace GeneratorLibrary.Generators.Tables
 
         public static double GenerateBlackbodyCorrection(WorldSize size, WorldSubType subtype, double atmosphereMass = 0f, double hydrographicCoverage = 0f)
         {
+            const double _TOLERANCE = 1e-10;
+
             double absorptionFactor = GetAbsorptionFactor(size, subtype, hydrographicCoverage);
             double greenhouseFactor = GetGreenhouseFactor(size, subtype);
-            return greenhouseFactor == 0
+
+            return Math.Abs(greenhouseFactor) > _TOLERANCE
                 ? absorptionFactor
                 : absorptionFactor * (1 + (atmosphereMass * greenhouseFactor));
         }
@@ -101,7 +103,7 @@ namespace GeneratorLibrary.Generators.Tables
                 WorldSize.Tiny => AbsorptionFactorsTinyWorld.GetValueOrDefault(subtype),
                 WorldSize.Small => AbsorptionFactorsSmallWorld.GetValueOrDefault(subtype),
                 WorldSize.Standard or WorldSize.Large => AbsorptionFactorsStandardOrLargeWorld.GetValueOrDefault(subtype),
-                _ => throw new Exception("Cannot get absorption factor based on world type."),
+                _ => throw new ArgumentOutOfRangeException($"Cannot get absorption factor based on world type: {size}."),
             };
         }
 

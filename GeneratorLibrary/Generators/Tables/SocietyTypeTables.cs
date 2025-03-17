@@ -1,5 +1,4 @@
-﻿using System.Net.Sockets;
-using GeneratorLibrary.Models;
+﻿using GeneratorLibrary.Models;
 
 namespace GeneratorLibrary.Generators.Tables
 {

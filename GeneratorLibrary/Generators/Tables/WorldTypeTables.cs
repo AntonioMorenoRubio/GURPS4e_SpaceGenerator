@@ -29,7 +29,7 @@ namespace GeneratorLibrary.Tables
             13 or 14 => (WorldSize.Large, WorldSubType.Ammonia),
             15 or 16 => (WorldSize.Large, WorldSubType.Greenhouse),
             17 or 18 => (WorldSize.Large, WorldSubType.Chthonian),
-            _ => throw new ArgumentOutOfRangeException("Couldn't generate hostile world.")
+            _ => throw new ArgumentOutOfRangeException($"Couldn't generate hostile world for dice roll {diceRoll}.")
         };
 
         public static (WorldSize Size, WorldSubType SubType) GenerateBarrenWorld(int diceRoll) => diceRoll switch
@@ -45,14 +45,14 @@ namespace GeneratorLibrary.Tables
             16 => (WorldSize.Standard, WorldSubType.Hadean),
             17 => (WorldSize.Large, WorldSubType.Ocean),
             18 => (WorldSize.Large, WorldSubType.Ice),
-            _ => throw new ArgumentOutOfRangeException("Couldn't generate barren world.")
+            _ => throw new ArgumentOutOfRangeException($"Couldn't generate barren world for dice roll {diceRoll}.")
         };
 
         public static (WorldSize Size, WorldSubType SubType) GenerateGardenWorld(int diceRoll) => diceRoll switch
         {
             >= 3 and <= 16 => (WorldSize.Standard, WorldSubType.Garden),
             >= 17 and <= 18 => (WorldSize.Large, WorldSubType.Garden),
-            _ => throw new ArgumentOutOfRangeException("Couldn't generate garden world.")
+            _ => throw new ArgumentOutOfRangeException($"Couldn't generate garden world for dice roll {diceRoll}.")
         };
     }
 }

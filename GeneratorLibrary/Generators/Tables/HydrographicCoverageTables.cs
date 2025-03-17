@@ -2,7 +2,7 @@
 
 namespace GeneratorLibrary.Generators.Tables
 {
-    public class HydrographicCoverageTables
+    public static class HydrographicCoverageTables
     {
         public static double GenerateHydrographicCoverage(WorldSize size, WorldSubType subType)
         {

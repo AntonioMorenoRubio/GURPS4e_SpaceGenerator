@@ -2,7 +2,7 @@
 
 namespace GeneratorLibrary.Generators.Tables
 {
-    public class TechLevelTables
+    public static class TechLevelTables
     {
         public static TechStatus DetermineTechStatus(SettlementData settlementData, int habitability, int roll)
         {
