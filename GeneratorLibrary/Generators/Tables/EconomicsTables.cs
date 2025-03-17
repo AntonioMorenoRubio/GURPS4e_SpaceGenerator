@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using GeneratorLibrary.Models;
-using GeneratorLibrary.Utils;
+﻿using GeneratorLibrary.Models;
 
 namespace GeneratorLibrary.Generators.Tables
 {
@@ -59,7 +57,7 @@ namespace GeneratorLibrary.Generators.Tables
             if (carryingCapacity < population)
                 finalPerCapitaIncome *= (decimal)(carryingCapacity / population);
 
-            return finalPerCapitaIncome.RoundToSignificantFigures(2);
+            return RoundToSignificantFigures(finalPerCapitaIncome, 2);
         }
 
         public static WealthLevel GetTypicalWealthLevel(decimal finalPerCapitaIncome, decimal basePerCapitaIncome) => (finalPerCapitaIncome / basePerCapitaIncome) switch
@@ -73,7 +71,7 @@ namespace GeneratorLibrary.Generators.Tables
 
         public static decimal CalculateEconomicVolume(decimal finalPerCapitaIncome, double population)
         {
-            return (finalPerCapitaIncome * (decimal)population).RoundToSignificantFigures(2);
+            return RoundToSignificantFigures(finalPerCapitaIncome * (decimal)population, 2);
         }
 
         public static decimal CalculateTradeVolumeInTrillionsOfMoney(decimal factor, decimal world1EconomicVolume, decimal world2EconomicVolume, double distance)
@@ -82,6 +80,16 @@ namespace GeneratorLibrary.Generators.Tables
             decimal world2Trillions = world2EconomicVolume / 1_000_000_000_000m;
 
             return factor * world1Trillions * world2Trillions / (decimal)distance;
+        }
+
+        private static decimal RoundToSignificantFigures(decimal value, int significantFigures)
+        {
+            if (value == 0)
+                return 0;
+
+            var exponent = (int)Math.Floor(Math.Log10((double)value));
+            var multiplier = (decimal)Math.Pow(10, exponent - significantFigures + 1);
+            return Math.Round(value / multiplier) * multiplier;
         }
     }
 }
