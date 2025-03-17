@@ -1,6 +1,5 @@
 ﻿using GeneratorLibrary.Generators.Tables;
 using GeneratorLibrary.Models;
-using GeneratorLibrary.Tests.Utils;
 
 namespace GeneratorLibrary.Tests.Generators.Tables
 {
@@ -292,14 +291,10 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             Atmosphere? atmosphere = createAtmosphere ? new Atmosphere() : null;
 
             if (atmosphere is not null)
-            {
                 atmosphere.MarginalAtmosphere = marginal;
-            }
-
-            var randomProvider = new TestRandomProvider(0.5); // No importa el valor aquí
 
             // Act
-            var actual = AtmosphereTables.ApplyMarginalAtmosphere(atmosphere, randomProvider);
+            var actual = AtmosphereTables.ApplyMarginalAtmosphere(atmosphere, 0.5);
 
             // Assert
             Assert.Equal(atmosphere, actual);
@@ -319,10 +314,8 @@ namespace GeneratorLibrary.Tests.Generators.Tables
                 MarginalAtmosphere = marginalType
             };
 
-            TestRandomProvider? testRandomProvider = new TestRandomProvider(probability);
-
             // Act
-            var result = AtmosphereTables.ApplyMarginalAtmosphere(atmosphere, testRandomProvider);
+            var result = AtmosphereTables.ApplyMarginalAtmosphere(atmosphere, probability);
 
             // Assert
             Assert.Equal(expectedComposition, result?.Composition);

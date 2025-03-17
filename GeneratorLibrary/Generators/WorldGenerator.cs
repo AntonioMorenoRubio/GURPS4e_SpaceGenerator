@@ -9,7 +9,7 @@ namespace GeneratorLibrary.Generators
     {
         private int SettingTL = 10;
         private readonly DiceRoller _diceRoller = DiceRoller.Instance;
-        private readonly IRandomProvider _randomProvider = new RandomProvider();
+        private readonly Random _random = Random.Shared;
 
         public WorldGenerator() { }
 
@@ -17,6 +17,7 @@ namespace GeneratorLibrary.Generators
         {
             SettingTL = TL;
             _diceRoller = new(seed);
+            _random = new(seed);
         }
 
         public World GenerateWorld()
@@ -47,7 +48,7 @@ namespace GeneratorLibrary.Generators
                 roll1 = _diceRoller.Roll();
                 atmosphere.MarginalAtmosphere = AtmosphereTables.GenerateMarginalAtmosphere(roll1);
 
-                Atmosphere? atm = AtmosphereTables.ApplyMarginalAtmosphere(atmosphere, _randomProvider);
+                Atmosphere? atm = AtmosphereTables.ApplyMarginalAtmosphere(atmosphere, randomValue: _random.NextDouble());
                 if (atm is not null)
                     atmosphere = atm;
             }

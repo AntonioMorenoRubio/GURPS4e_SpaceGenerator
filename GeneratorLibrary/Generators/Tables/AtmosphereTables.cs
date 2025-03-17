@@ -1,6 +1,4 @@
-﻿using System;
-using GeneratorLibrary.Models;
-using GeneratorLibrary.Utils;
+﻿using GeneratorLibrary.Models;
 
 namespace GeneratorLibrary.Generators.Tables
 {
@@ -118,7 +116,7 @@ namespace GeneratorLibrary.Generators.Tables
             _ => throw new ArgumentOutOfRangeException($"Couldn't generate marginal atmosphere. Roll:{roll}.")
         };
 
-        public static Atmosphere? ApplyMarginalAtmosphere(Atmosphere? atmosphere, IRandomProvider randomProvider)
+        public static Atmosphere? ApplyMarginalAtmosphere(Atmosphere? atmosphere, double randomValue)
         {
             if (atmosphere is null || atmosphere.MarginalAtmosphere is MarginalAtmosphere.None)
                 return atmosphere;
@@ -135,7 +133,7 @@ namespace GeneratorLibrary.Generators.Tables
             switch (atmosphere.MarginalAtmosphere)
             {
                 case MarginalAtmosphere.ChlorineOrFluorine:
-                    string element = randomProvider.NextDouble() <= 0.90 ? "Chlorine" : "Fluorine";
+                    string element = randomValue <= 0.90 ? "Chlorine" : "Fluorine";
                     newAtmosphere.Composition.Add(element);
                     newAtmosphere.Characteristics.Add(AtmosphereCharacteristic.HighlyToxic);
                     break;
