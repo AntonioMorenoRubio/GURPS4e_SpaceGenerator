@@ -1,13 +1,12 @@
 using GeneratorLibrary.Generators.Tables;
 using GeneratorLibrary.Models;
 using GeneratorLibrary.Tables;
-using GeneratorLibrary.Utils;
 
 namespace GeneratorLibrary.Generators
 {
     public class WorldGenerator
     {
-        private int SettingTL = 10;
+        private readonly int SettingTL = 10;
         private readonly DiceRoller _diceRoller = DiceRoller.Instance;
         private readonly Random _random = Random.Shared;
 
@@ -148,20 +147,18 @@ namespace GeneratorLibrary.Generators
             //STEP 10: Population
             Population population = new();
 
-            if (world.Type.SubType is WorldSubType.GasGiant)
+            if (world.Type.SubType is not WorldSubType.GasGiant)
             {
-
+                if (world.Type.SubType is WorldSubType.AsteroidBelt)
+                    population.CarryingCapacity = PopulationTables.CalculateAsteroidCarryingCapacity(
+                        world.TechLevel.TL,
+                        world.ResourcesHabitability.Affinity);
+                else
+                    population.CarryingCapacity = PopulationTables.CalculateWorldCarryingCapacity(
+                        world.TechLevel.TL,
+                        world.ResourcesHabitability.Affinity,
+                        world.Characteristics?.Diameter);
             }
-            else if (world.Type.SubType is WorldSubType.AsteroidBelt)
-                population.CarryingCapacity = PopulationTables.CalculateAsteroidCarryingCapacity(
-                    world.TechLevel.TL,
-                    world.ResourcesHabitability.Affinity);
-            else
-                population.CarryingCapacity = PopulationTables.CalculateWorldCarryingCapacity(
-                    world.TechLevel.TL,
-                    world.ResourcesHabitability.Affinity,
-                    world.Characteristics?.Diameter);
-
 
             switch (world.SettlementData.Type)
             {
