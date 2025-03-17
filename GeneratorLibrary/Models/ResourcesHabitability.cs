@@ -1,4 +1,4 @@
-﻿namespace GeneratorLibrary.Generators.Tables
+﻿namespace GeneratorLibrary.Models
 {
     public record ResourcesHabitability
     {
