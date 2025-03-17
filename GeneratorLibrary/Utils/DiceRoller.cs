@@ -16,13 +16,13 @@ public class DiceRoller
         _random = new Random(seed);
     }
 
-    public int Roll(int numberOfDice = 3, params int[] modifier)
+    public int Roll(int numberOfDice = 3, params int[] modifiers)
     {
         if (numberOfDice < 1)
         {
             throw new ArgumentException("Number of dice must be at least 1", nameof(numberOfDice));
         }
 
-        return _random.Next(numberOfDice, numberOfDice * 6 + 1) + modifier.Sum();
+        return _random.Next(numberOfDice, numberOfDice * 6 + 1) + modifiers.Sum();
     }
 }
