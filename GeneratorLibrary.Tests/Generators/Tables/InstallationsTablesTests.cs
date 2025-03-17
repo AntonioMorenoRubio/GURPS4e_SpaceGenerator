@@ -1,7 +1,5 @@
-﻿using GeneratorLibrary.Generators;
-using GeneratorLibrary.Generators.Tables;
+﻿using GeneratorLibrary.Generators.Tables;
 using GeneratorLibrary.Models;
-using GeneratorLibrary.Utils;
 
 namespace GeneratorLibrary.Tests.Generators.Tables
 {
@@ -294,31 +292,11 @@ namespace GeneratorLibrary.Tests.Generators.Tables
         [Theory]
         [InlineData(1, 3)]
         [InlineData(2, 3)]
-        public void GetUniversityPR_WithRollOneOrTwo_ReturnsThree(int roll, int expected)
-        {
-            // Act
-            int result = InstallationsTables.GetUniversityPR(roll);
-
-            // Assert
-            Assert.Equal(expected, result);
-        }
-
-        [Theory]
         [InlineData(3, 4)]
         [InlineData(4, 4)]
-        public void GetUniversityPR_WithRollThreeOrFour_ReturnsFour(int roll, int expected)
-        {
-            // Act
-            int result = InstallationsTables.GetUniversityPR(roll);
-
-            // Assert
-            Assert.Equal(expected, result);
-        }
-
-        [Theory]
         [InlineData(5, 5)]
         [InlineData(6, 5)]
-        public void GetUniversityPR_WithRollFiveOrSix_ReturnsFive(int roll, int expected)
+        public void GetUniversityPR_ReturnsCorrectValue(int roll, int expected)
         {
             // Act
             int result = InstallationsTables.GetUniversityPR(roll);
