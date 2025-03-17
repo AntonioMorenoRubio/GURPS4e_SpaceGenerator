@@ -262,13 +262,13 @@ namespace GeneratorLibrary.Generators
                         foreach (var specialSociety in world.Society.SpecialSocieties)
                             controlRating.CRList.Add(ControlRatingTables.GetControlRatingRange(specialSociety));
 
-                    controlRating.minMaxCR = (
+                    controlRating.MinMaxCR = (
                         controlRating.CRList.Max(x => x.Item1),
                         controlRating.CRList.Max(x => x.Item2)
                         );
 
                     roll1 = DiceRoller.Instance.Roll(2);
-                    controlRating.CR = ControlRatingTables.GenerateControlRatingInRange(controlRating.minMaxCR.Min, controlRating.minMaxCR.Max, roll1);
+                    controlRating.CR = ControlRatingTables.GenerateControlRatingInRange(controlRating.MinMaxCR.Min, controlRating.MinMaxCR.Max, roll1);
 
                     world.ControlRating = controlRating;
 

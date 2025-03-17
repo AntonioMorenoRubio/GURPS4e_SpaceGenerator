@@ -1,27 +1,26 @@
 using System.Globalization;
 using System.Text;
-using GeneratorLibrary.Generators.Tables;
 
 namespace GeneratorLibrary.Models
 {
     public class World
     {
         //Physical Parameters
-        public WorldType? Type { get; set; } = null;
-        public Atmosphere? Atmosphere { get; set; } = null;
-        public HydrographicCoverage? HydrographicCoverage { get; set; } = null;
-        public Climate? Climate { get; set; } = null;
-        public Characteristics? Characteristics { get; set; } = null;
-        public ResourcesHabitability? ResourcesHabitability { get; set; } = null;
+        public WorldType? Type { get; set; }
+        public Atmosphere? Atmosphere { get; set; }
+        public HydrographicCoverage? HydrographicCoverage { get; set; }
+        public Climate? Climate { get; set; }
+        public Characteristics? Characteristics { get; set; }
+        public ResourcesHabitability? ResourcesHabitability { get; set; }
 
         //Social Parameters
-        public SettlementData? SettlementData { get; set; } = null;
-        public TechLevel? TechLevel { get; set; } = null;
-        public Population? Population { get; set; } = null;
-        public Society? Society { get; set; } = null;
-        public ControlRating? ControlRating { get; set; } = null;
-        public Economics? Economics { get; set; } = null;
-        public Installations? Installations { get; set; } = null;
+        public SettlementData? SettlementData { get; set; }
+        public TechLevel? TechLevel { get; set; }
+        public Population? Population { get; set; }
+        public Society? Society { get; set; }
+        public ControlRating? ControlRating { get; set; }
+        public Economics? Economics { get; set; }
+        public Installations? Installations { get; set; }
 
         public World() { }
 
@@ -164,7 +163,7 @@ namespace GeneratorLibrary.Models
                 sb.AppendLine("Control Rating:");
                 sb.Append("Control Rating List:");
                 sb.AppendLine($"{string.Join(',', ControlRating.CRList)}");
-                sb.AppendLine($"Minimum and Maximum CR: {ControlRating.minMaxCR}");
+                sb.AppendLine($"Minimum and Maximum CR: {ControlRating.MinMaxCR}");
                 sb.AppendLine($"Final CR: {ControlRating.CR}");
             }
 

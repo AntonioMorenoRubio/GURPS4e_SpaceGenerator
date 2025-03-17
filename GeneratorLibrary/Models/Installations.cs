@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GeneratorLibrary.Models
+﻿namespace GeneratorLibrary.Models
 {
     public record Installations
     {
@@ -25,8 +19,8 @@ namespace GeneratorLibrary.Models
     public record Facility
     {
         public FacilityType Type { get; set; }
-        public int? PR { get; set; } = null;
-        public bool IsSecret = false;
+        public int? PR { get; set; }
+        public bool IsSecret { get; set; }
 
         public Facility()
         {
