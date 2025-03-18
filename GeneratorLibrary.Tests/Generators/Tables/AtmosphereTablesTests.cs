@@ -324,9 +324,24 @@ namespace GeneratorLibrary.Tests.Generators.Tables
 
         [Theory]
         [InlineData(WorldSize.Special, WorldSubType.AsteroidBelt, 1.0, 1.0, 0.0)]
+        [InlineData(WorldSize.Tiny, WorldSubType.Ice, 1.0, 1.0, 0.0)]
         [InlineData(WorldSize.Tiny, WorldSubType.Rock, 2.0, 1.5, 0.0)]
+        [InlineData(WorldSize.Tiny, WorldSubType.Sulfur, 2.0, 1.5, 0.0)]
+        [InlineData(WorldSize.Small, WorldSubType.Hadean, 2.0, 1.5, 0.0)]
+        [InlineData(WorldSize.Standard, WorldSubType.Hadean, 2.0, 1.5, 0.0)]
         [InlineData(WorldSize.Small, WorldSubType.Rock, 3.0, 2.0, 0.01)]
-        [InlineData(WorldSize.Standard, WorldSubType.Ocean, 1.0, 1.0, 1.0)]
+        [InlineData(WorldSize.Standard, WorldSubType.Chthonian, 3.0, 2.0, 0.01)]
+        [InlineData(WorldSize.Large, WorldSubType.Chthonian, 3.0, 2.0, 0.01)]
+        [InlineData(WorldSize.Small, WorldSubType.Ice, 2.0, 1.0, 20.0)]
+        [InlineData(WorldSize.Standard, WorldSubType.Ammonia, 2.0, 1.0, 2.0)]
+        [InlineData(WorldSize.Standard, WorldSubType.Ice, 2.0, 2.0, 4.0)]
+        [InlineData(WorldSize.Standard, WorldSubType.Ocean, 3.0, 1.0, 3.0)]
+        [InlineData(WorldSize.Standard, WorldSubType.Garden, 2.0, 4.0, 8.0)]
+        [InlineData(WorldSize.Standard, WorldSubType.Greenhouse, 2.0, 1.0, 200.0)]
+        [InlineData(WorldSize.Large, WorldSubType.Ammonia, 2.0, 1.0, 10.0)]
+        [InlineData(WorldSize.Large, WorldSubType.Ice, 2.0, 2.0, 20.0)]
+        [InlineData(WorldSize.Large, WorldSubType.Ocean, 3.0, 1.0, 15.0)]
+        [InlineData(WorldSize.Large, WorldSubType.Garden, 2.0, 4.0, 40.0)]
         [InlineData(WorldSize.Large, WorldSubType.Greenhouse, 2.0, 2.0, 2000.0)]
         public void GenerateAtmosphericPressure_ShouldReturnExpectedPressure(
         WorldSize size, WorldSubType subType, double atmosphereMass, double surfaceGravity, double expectedPressure)
@@ -336,6 +351,13 @@ namespace GeneratorLibrary.Tests.Generators.Tables
 
             // Assert
             Assert.Equal(expectedPressure, result, precision: 2);
+        }
+
+        [Fact]
+        public void GenerateAtmosphericPressure_GasGiant_ShouldThrowException()
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => AtmosphereTables.GenerateAtmosphericPressure(WorldSize.Special, WorldSubType.GasGiant, 1.0, 1.0));
         }
 
         [Theory]
@@ -355,5 +377,14 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             // Assert
             Assert.Equal(expectedCategory, result);
         }
+
+        [Theory]
+        [InlineData(double.NaN)]
+        public void GetPressureCategory_ShouldThrowException(double pressure)
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => AtmosphereTables.GetPressureCategory(pressure));
+        }
+
     }
 }
