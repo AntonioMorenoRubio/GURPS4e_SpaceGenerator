@@ -82,14 +82,9 @@ namespace GeneratorLibrary.Generators.Tables
 
         public static double GenerateBlackbodyCorrection(WorldSize size, WorldSubType subtype, double atmosphereMass = 0f, double hydrographicCoverage = 0f)
         {
-            const double _TOLERANCE = 1e-10;
-
             double absorptionFactor = GetAbsorptionFactor(size, subtype, hydrographicCoverage);
             double greenhouseFactor = GetGreenhouseFactor(size, subtype);
-
-            return Math.Abs(greenhouseFactor) > _TOLERANCE
-                ? absorptionFactor
-                : absorptionFactor * (1 + (atmosphereMass * greenhouseFactor));
+            return Math.Round(absorptionFactor * (1 + (atmosphereMass * greenhouseFactor)), 2);
         }
 
         public static double GetAbsorptionFactor(WorldSize size, WorldSubType subtype, double hydrographicCoverage)
