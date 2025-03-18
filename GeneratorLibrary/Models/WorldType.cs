@@ -1,6 +1,10 @@
 ﻿namespace GeneratorLibrary.Models
 {
-    public record WorldType(WorldSize Size, WorldSubType SubType);
+    public record WorldType
+    {
+        public WorldSize Size { get; set; }
+        public WorldSubType SubType { get; set; }
+    }
 
     public enum WorldSize
     {

@@ -30,7 +30,11 @@ namespace GeneratorLibrary.Generators
             roll2 = _diceRoller.Roll();
             string overallType = WorldTypeTables.GetOverallType(roll1);
             (WorldSize size, WorldSubType subType) = WorldTypeTables.GenerateWorldType(overallType, roll2);
-            world.Type = new WorldType(size, subType);
+            world.Type = new WorldType
+            {
+                Size = size,
+                SubType = subType
+            };
 
             //STEP 3: Generate Atmosphere
             Atmosphere atmosphere = new()
