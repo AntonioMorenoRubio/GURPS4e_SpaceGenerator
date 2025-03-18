@@ -198,7 +198,7 @@ namespace GeneratorLibrary.Generators.Tables
                 (WorldSize.Large, WorldSubType.Ocean) or
                 (WorldSize.Large, WorldSubType.Garden) => 5.0,
                 (WorldSize.Large, WorldSubType.Greenhouse) => 500.0,
-                _ => throw new ArgumentOutOfRangeException(nameof(size), "Invalid world type for atmospheric pressure.")
+                _ => throw new ArgumentOutOfRangeException($"Invalid world type for atmospheric pressure {(size, subType)}")
             };
 
             // Calcular presión atmosférica
@@ -216,7 +216,7 @@ namespace GeneratorLibrary.Generators.Tables
             > 1.2f and <= 1.5f => PressureCategory.Dense,
             > 1.5f and <= 10f => PressureCategory.VeryDense,
             > 10f => PressureCategory.Superdense,
-            _ => PressureCategory.None
+            _ => throw new ArgumentOutOfRangeException($"Invalid pressure to get atmospheric pressure category: {pressure}")
         };
     }
 }
