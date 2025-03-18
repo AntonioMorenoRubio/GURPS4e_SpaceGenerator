@@ -27,13 +27,12 @@ namespace GeneratorLibrary.Generators.Tables
 
             decimal affinityModifier = affinity switch
             {
-                10 => 1.4m,  // +40%
+                >= 10 => 1.4m,  // +40%
                 9 => 1.2m,   // +20%
                 >= 7 and <= 8 => 1.0m, // +0%
                 >= 4 and <= 6 => 0.9m, // -10%
                 >= 1 and <= 3 => 0.8m, // -20%
                 <= 0 => 0.7m,  // -30%
-                _ => 1.0m
             };
 
             // Aplicar modificadores según PR
