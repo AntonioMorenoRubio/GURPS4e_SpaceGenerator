@@ -1,5 +1,5 @@
 ﻿using GeneratorLibrary.Generators;
-using GeneratorLibrary.Models;
+using GeneratorLibrary.Models.Basic;
 
 WorldGenerator worldGenerator = new();
 

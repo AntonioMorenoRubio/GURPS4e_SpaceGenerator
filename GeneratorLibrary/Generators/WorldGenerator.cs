@@ -1,6 +1,5 @@
-using GeneratorLibrary.Generators.Tables;
-using GeneratorLibrary.Models;
-using GeneratorLibrary.Tables;
+using GeneratorLibrary.Generators.Tables.Basic;
+using GeneratorLibrary.Models.Basic;
 
 namespace GeneratorLibrary.Generators
 {

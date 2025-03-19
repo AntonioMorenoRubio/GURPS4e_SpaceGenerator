@@ -1,5 +1,5 @@
 using GeneratorLibrary.Generators;
-using GeneratorLibrary.Models;
+using GeneratorLibrary.Models.Basic;
 
 namespace GeneratorLibrary.Tests;
 

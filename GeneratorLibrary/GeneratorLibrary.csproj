@@ -7,4 +7,9 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Generators\Tables\Advanced\" />
+    <Folder Include="Models\Advanced\" />
+  </ItemGroup>
+
 </Project>
