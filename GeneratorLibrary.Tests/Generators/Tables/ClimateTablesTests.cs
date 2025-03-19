@@ -35,6 +35,13 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             Assert.InRange(result, minExpected, maxExpected);
         }
 
+        [Fact]
+        public void GenerateAverageSurfaceTemperatureInKelvinsByWorldType_GasGiant_ShouldThrowException()
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => ClimateTables.GenerateAverageSurfaceTemperatureInKelvinsByWorldType(WorldSize.Special, WorldSubType.GasGiant));
+        }
+
         [Theory]
         [InlineData(243.99d, ClimateType.Frozen)]   // Caso límite inferior para "Frozen"
         [InlineData(244d, ClimateType.VeryCold)]    // Límite inferior de "VeryCold"
@@ -63,6 +70,14 @@ namespace GeneratorLibrary.Tests.Generators.Tables
 
             // Assert
             Assert.Equal(expectedClimateType, result);
+        }
+
+        [Theory]
+        [InlineData(double.NaN)]
+        public void GetClimateTypeBasedOnKelvinTemperature_InvalidValues_ShouldThrowException(double kelvins)
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => ClimateTables.GetClimateTypeBasedOnKelvinTemperature(kelvins));
         }
 
         [Theory]
@@ -104,6 +119,14 @@ namespace GeneratorLibrary.Tests.Generators.Tables
 
             // Assert
             Assert.Equal(expectedFactor, result);
+        }
+
+        [Theory]
+        [InlineData(WorldSize.Special, WorldSubType.GasGiant, double.NaN)]
+        public void GetAbsorptionFactor_InvalidValues_ShouldThrowException(WorldSize size, WorldSubType subType, double hydrographicCoverage)
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => ClimateTables.GetAbsorptionFactor(size, subType, hydrographicCoverage));
         }
 
         [Theory]

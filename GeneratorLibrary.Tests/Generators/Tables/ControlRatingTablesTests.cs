@@ -41,6 +41,16 @@ namespace GeneratorLibrary.Tests.Generators.Tables
         }
 
         [Theory]
+        [InlineData(10)] //Minimum value ouside enum
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        public void GetControlRatingRange_InvalidSocietyType_ShouldThrowException(int societyType)
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => ControlRatingTables.GetControlRatingRange((SocietyType)societyType));
+        }
+
+        [Theory]
         [InlineData(SpecialSociety.Bureaucracy, 4, 6)]
         [InlineData(SpecialSociety.Colony, 3, 6)]
         [InlineData(SpecialSociety.Cybercracy, 3, 6)]
@@ -61,6 +71,16 @@ namespace GeneratorLibrary.Tests.Generators.Tables
             // Assert
             Assert.Equal(expectedMin, minCR);
             Assert.Equal(expectedMax, maxCR);
+        }
+
+        [Theory]
+        [InlineData(12)] //Minimum value ouside enum
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        public void GetControlRatingRange_InvalidSpecialSocietyType_ShouldThrowException(int specialSociety)
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => ControlRatingTables.GetControlRatingRange((SpecialSociety)specialSociety));
         }
 
         [Theory]
