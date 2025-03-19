@@ -1,12 +1,12 @@
-﻿namespace GeneratorLibrary;
+﻿using GeneratorLibrary.Utils;
 
-public class DiceRoller
+namespace GeneratorLibrary;
+
+public class DiceRoller : IDiceRoller
 {
-    private static readonly Lazy<DiceRoller> _instance = new(() => new DiceRoller());
     private readonly Random _random;
-    public static DiceRoller Instance => _instance.Value;
 
-    private DiceRoller()
+    public DiceRoller()
     {
         _random = new Random();
     }
@@ -14,6 +14,11 @@ public class DiceRoller
     public DiceRoller(int seed)
     {
         _random = new Random(seed);
+    }
+
+    public DiceRoller(Random random)
+    {
+        _random = random ?? throw new ArgumentNullException(nameof(random));
     }
 
     public int Roll(int numberOfDice = 3, params int[] modifiers)

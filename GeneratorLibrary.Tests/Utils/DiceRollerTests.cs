@@ -1,4 +1,7 @@
-﻿namespace GeneratorLibrary.Tests;
+﻿using GeneratorLibrary.Utils;
+using Moq;
+
+namespace GeneratorLibrary.Tests.Utils;
 
 public class DiceRollerTests
 {
@@ -9,7 +12,7 @@ public class DiceRollerTests
     public void Roll_Default3d6_ShouldReturnValueBetween3And18_MultipleTimes(int rolls)
     {
         // Arrange
-        DiceRoller roller = DiceRoller.Instance;
+        DiceRoller roller = new DiceRoller();
 
         for (int i = 0; i < rolls; i++)
         {
@@ -27,7 +30,7 @@ public class DiceRollerTests
     public void Roll_MultipleTimes_ShouldReturnDifferentValues(int repetitions)
     {
         // Arrange
-        DiceRoller roller = DiceRoller.Instance;
+        DiceRoller roller = new DiceRoller();
         List<int> results = new();
 
         // Act
@@ -50,7 +53,7 @@ public class DiceRollerTests
     public void Roll_Nd6_ShouldReturnValueWithinValidRange(int numberOfDice)
     {
         // Arrange
-        DiceRoller roller = DiceRoller.Instance;
+        DiceRoller roller = new DiceRoller();
 
         // Act
         var result = roller.Roll(numberOfDice);
@@ -75,7 +78,7 @@ public class DiceRollerTests
     public void Roll_Nd6_WithModifier_ShouldReturnCorrectRange(int numberOfDice, params int[] modifier)
     {
         // Arrange
-        DiceRoller roller = DiceRoller.Instance;
+        DiceRoller roller = new DiceRoller();
 
         // Act
         var result = roller.Roll(numberOfDice, modifier);
@@ -119,9 +122,47 @@ public class DiceRollerTests
     public void Roll_InvalidNumberOfDice_ShouldThrowArgumentException(int numberOfDice)
     {
         // Arrange
-        DiceRoller roller = DiceRoller.Instance;
+        DiceRoller roller = new DiceRoller();
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() => roller.Roll(numberOfDice));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    [InlineData(8)]
+    [InlineData(9)]
+    [InlineData(10)]
+    [InlineData(11)]
+    [InlineData(12)]
+    [InlineData(13)]
+    [InlineData(14)]
+    [InlineData(15)]
+    [InlineData(16)]
+    [InlineData(17)]
+    [InlineData(18)]
+    [InlineData(int.MinValue)]
+    [InlineData(int.MaxValue)]
+    public void Roll_MockedDiceRoller_ShouldReturnValueToMock(int valueToMock)
+    {
+        //Arrange
+        Mock<IDiceRoller> mockIDiceRoller = new Mock<IDiceRoller>();
+        mockIDiceRoller.Setup(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>()))
+                      .Returns(valueToMock);
+        IDiceRoller IDiceRoller = mockIDiceRoller.Object;
+
+        //Act
+        int actual = IDiceRoller.Roll();
+
+        //Assert
+        Assert.Equal(valueToMock, actual);
+        mockIDiceRoller.Verify(r => r.Roll(It.IsAny<int>(), It.IsAny<int[]>()), Times.Once());
     }
 }
