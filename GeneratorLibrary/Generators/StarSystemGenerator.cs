@@ -27,6 +27,15 @@ namespace GeneratorLibrary.Generators
             for (int i = 0; i < numberOfStars; i++)
                 starSystem.Stars.Add(new Star());
 
+            //STEP 16: Solar Masses (S101)
+            int roll1 = _diceRoller.Roll();
+            int roll2 = _diceRoller.Roll();
+            starSystem.Stars[0].Mass = SolarMassesTable.GetPrimaryStarMass(roll1, roll2);
+
+            if (starSystem.Stars.Count > 1)
+                for (int i = 1; i < starSystem.Stars.Count; i++)
+                    starSystem.Stars[i].Mass = SolarMassesTable.GetCompanionStarMass(starSystem.Stars[0].Mass);
+
             return starSystem;
         }
     }
