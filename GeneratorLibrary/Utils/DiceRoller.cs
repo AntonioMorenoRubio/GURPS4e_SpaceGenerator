@@ -1,6 +1,4 @@
-﻿using GeneratorLibrary.Utils;
-
-namespace GeneratorLibrary;
+﻿namespace GeneratorLibrary.Utils;
 
 public class DiceRoller : IDiceRoller
 {
