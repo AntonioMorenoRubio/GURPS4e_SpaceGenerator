@@ -180,23 +180,23 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
         public static IEnumerable<object[]> ColonyPopulationTestData()
         {
             foreach (object[] roll in DiceRollerTests.Valid3dDiceRollValues())
-                for (int i = ResourceHabitabilityTablesTests.MINIMUM_AFFINITY; i <= ResourceHabitabilityTablesTests.MAXIMUM_AFFINITY; i++)
-                    for (int j = 0; j <= 250; j += 10)
+                for (int affinity = ResourceHabitabilityTablesTests.MINIMUM_AFFINITY; affinity <= ResourceHabitabilityTablesTests.MAXIMUM_AFFINITY; affinity++)
+                    for (int yearsSinceFounded = 0; yearsSinceFounded <= 250; yearsSinceFounded += 50)
                     {
-                        int modifier = i * 3 + j / 10;
+                        int modifier = affinity * 3 + yearsSinceFounded / 10;
                         int finalRoll = (int)roll[0] + modifier;
 
                         if (finalRoll <= 25)
                             yield return new object[] {
-                            i,
+                            affinity,
                             roll[0],
-                            j,
+                            yearsSinceFounded,
                             10_000 };
                         else if (PopulationTables.GetColonyBasicPopulation().TryGetValue(finalRoll, out double value))
                             yield return new object[] {
-                            i,
+                            affinity,
                             roll[0],
-                            j,
+                            yearsSinceFounded,
                             value };
                         else
                         {
@@ -208,9 +208,9 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
                                 finalRoll -= 10;
                             }
                             yield return new object[] {
-                            i,
+                            affinity,
                             roll[0],
-                            j,
+                            yearsSinceFounded,
                             PopulationTables.GetColonyBasicPopulation()[finalRoll] * Math.Pow(10, e10) };
                         }
                     }
