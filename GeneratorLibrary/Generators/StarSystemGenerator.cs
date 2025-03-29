@@ -7,11 +7,17 @@ namespace GeneratorLibrary.Generators
     public class StarSystemGenerator
     {
         private readonly DiceRoller _diceRoller = new();
+        private readonly bool mustHaveGardenWorld;
 
         public StarSystemGenerator() { }
         public StarSystemGenerator(int seed)
         {
             _diceRoller = new DiceRoller(seed);
+        }
+
+        public StarSystemGenerator(bool mustHaveGardenWorld)
+        {
+            this.mustHaveGardenWorld = mustHaveGardenWorld;
         }
 
         public StarSystem CreateStarSystem(bool isOpenCluster = false)
@@ -38,6 +44,11 @@ namespace GeneratorLibrary.Generators
                     starSystem.Stars[i].Mass = SolarMassesTable.GetCompanionStarMass
                         (starSystem.Stars[0].Mass,
                         _diceRoller);
+
+            //STEP 17: Stellar Age (S102)
+            (StellarAgePopulationType type, double age) = StellarAgeTable.DetermineStellarAge(_diceRoller, mustHaveGardenWorld);
+            starSystem.StellarAge.Type = type;
+            starSystem.StellarAge.Age = age;
 
             return starSystem;
         }
