@@ -11,9 +11,9 @@ namespace GeneratorLibrary.Generators.Tables.Basic
             // Aplicar modificadores según el tipo de asentamiento
             if (settlementData.Type is SettlementType.Homeworld && !settlementData.IsInClaimedSpace)
                 modifiers.Add(-10);
-            if (settlementData.Type is SettlementType.Homeworld && habitability is >= 4 and <= 6)
+            if ((settlementData.Type is SettlementType.Homeworld || settlementData.Type is SettlementType.Colony) && habitability is >= 4 and <= 6)
                 modifiers.Add(1);
-            if (settlementData.Type is SettlementType.Homeworld && habitability is <= 3)
+            if ((settlementData.Type is SettlementType.Homeworld || settlementData.Type is SettlementType.Colony) && habitability is <= 3)
                 modifiers.Add(2);
             if (settlementData.Type is SettlementType.Outpost)
                 modifiers.Add(3);

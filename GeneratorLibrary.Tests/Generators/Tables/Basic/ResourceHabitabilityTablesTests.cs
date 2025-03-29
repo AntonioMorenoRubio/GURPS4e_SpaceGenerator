@@ -5,6 +5,11 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
 {
     public class ResourceHabitabilityTablesTests
     {
+        public const int MINIMUM_HABITABILITY = -2;
+        public const int MAXIMUM_HABITABILITY = 8;
+        public const int MINIMUM_AFFINITY = -5;
+        public const int MAXIMUM_AFFINITY = 10;
+
         public static IEnumerable<object[]> WorldsTestData => new List<object[]>
         {
             // Mundo sin atmósfera (Vacío)
@@ -95,7 +100,6 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
                 new List<int> { 3, 1, 2, 2 } // Atmósfera estándar (+3), Atmósfera no marginal (+1), océanos 60-90% (+2), clima templado cálido (+2)
             }
         };
-
 
         [Theory]
         [InlineData(3, -5)]
@@ -199,6 +203,18 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
 
             // Assert
             Assert.Equal(expectedModifiers.OrderBy(x => x), actualModifiers.OrderBy(x => x));
+        }
+
+        [Theory]
+        [MemberData(nameof(WorldsTestData))]
+        public void GetHabitabilityModifiers_ModifiersSumWithinRange(World world, List<int> expectedModifiers)
+        {
+            // Act
+            List<int> actualModifiers = ResourceHabitabilityTables.GetHabitabilityModifiers(world);
+
+            // Assert
+            Assert.InRange(actualModifiers.Sum(), MINIMUM_HABITABILITY, MAXIMUM_HABITABILITY);
+            Assert.InRange(expectedModifiers.Sum(), MINIMUM_HABITABILITY, MAXIMUM_HABITABILITY);
         }
     }
 }

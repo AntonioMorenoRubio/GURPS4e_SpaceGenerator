@@ -1,49 +1,87 @@
 ﻿using GeneratorLibrary.Generators.Tables.Basic;
 using GeneratorLibrary.Models.Basic;
+using GeneratorLibrary.Tests.Utils;
 
 namespace GeneratorLibrary.Tests.Generators.Tables.Basic
 {
     public class TechLevelTablesTests
     {
-        const int MIN_TL = 0;
+        public const int MIN_TL = 0;
+        public const int MAX_TL = 12;
         const int MAX_PRIMITIVE_TL = 6; // MAXIMUM(3d6) - 12 => 18 - 12 => 6. S91
-        const int MIN_HABITABILITY_LESSEQUAL_THREE = 8;
+        const int MIN_TL_IF_HABITABILITY_LESSEQUAL_THREE = 8;
 
+        public static IEnumerable<object[]> GenerateTechStatusTestCases()
+        {
+            List<object[]> testCases = new List<object[]>();
+
+            // Para cada tipo de asentamiento
+            foreach (SettlementType settlementType in Enum.GetValues(typeof(SettlementType)))
+                // Para cada estado de espacio reclamado
+                foreach (bool isInClaimedSpace in new[] { true, false })
+                    // Para cada valor de habitabilidad
+                    for (int habitability = ResourceHabitabilityTablesTests.MINIMUM_HABITABILITY; habitability <= ResourceHabitabilityTablesTests.MAXIMUM_HABITABILITY; habitability++)
+                    {
+                        // Obtenemos el modificador según las reglas
+                        int modifier = CalculateModifier(settlementType, isInClaimedSpace, habitability);
+
+                        foreach (object[] roll in DiceRollerTests.Valid3dDiceRollValues())
+                        {
+                            int modifiedRoll = (int)roll[0] + modifier;
+                            TechStatus expectedStatus = DetermineExpectedStatus(modifiedRoll);
+                            testCases.Add(new object[] { settlementType, isInClaimedSpace, habitability, roll[0], expectedStatus });
+                        }
+                    }
+            // Añadir casos especiales y extremos
+            // Por ejemplo, valores límite de habitabilidad o casos donde se apliquen múltiples reglas
+
+            // Filtrar casos redundantes o inválidos si es necesario
+            return testCases.Distinct(new TestCaseComparer()).ToList();
+        }
+
+        private static int CalculateModifier(SettlementType type, bool isInClaimedSpace, int habitability)
+        {
+            int modifier = 0;
+
+            // -10 si es un mundo natal fuera del espacio reclamado
+            if (type == SettlementType.Homeworld && !isInClaimedSpace)
+                modifier -= 10;
+            // +1 si es un mundo natal o colonia con habitabilidad entre 4-6
+            if ((type == SettlementType.Homeworld || type == SettlementType.Colony) &&
+                     habitability >= 4 && habitability <= 6)
+                modifier += 1;
+            // +2 si es un mundo natal o colonia con habitabilidad ≤3
+            if ((type == SettlementType.Homeworld || type == SettlementType.Colony) &&
+                     habitability <= 3)
+                modifier += 2;
+            // +3 si es un puesto avanzado (outpost)
+            if (type == SettlementType.Outpost)
+                modifier += 3;
+
+            return modifier;
+        }
+
+        private static TechStatus DetermineExpectedStatus(int modifiedRoll)
+        {
+            // Determinamos el estado tecnológico según la tabla
+            if (modifiedRoll <= 3)
+                return TechStatus.Primitive;
+            else if (modifiedRoll == 4)
+                return TechStatus.StandardMinus3;
+            else if (modifiedRoll == 5)
+                return TechStatus.StandardMinus2;
+            else if (modifiedRoll == 6 || modifiedRoll == 7)
+                return TechStatus.StandardMinus1;
+            else if (modifiedRoll >= 8 && modifiedRoll <= 11)
+                return TechStatus.Delayed;
+            else if (modifiedRoll >= 12 && modifiedRoll <= 15)
+                return TechStatus.Standard;
+            else // modifiedRoll >= 16
+                return TechStatus.Advanced;
+        }
 
         [Theory]
-        // Caso 1: Homeworld fuera de espacio reclamado (modificador -10)
-        [InlineData(SettlementType.Homeworld, false, 5, 10, TechStatus.Primitive)]
-        [InlineData(SettlementType.Homeworld, false, 8, 10, TechStatus.Primitive)]
-
-        // Caso 2: Homeworld en espacio reclamado, habitabilidad 4-6 (modificador +1)
-        [InlineData(SettlementType.Homeworld, true, 4, 7, TechStatus.Delayed)] // (7 + 1 = 8) Standard (Delayed)
-        [InlineData(SettlementType.Homeworld, true, 5, 11, TechStatus.Standard)] // (11 + 1 = 12) Standard
-        [InlineData(SettlementType.Homeworld, true, 6, 15, TechStatus.Advanced)] // (15 + 1 = 16) Standard (Advanced)
-
-        // Caso 3: Homeworld en espacio reclamado, habitabilidad ≤3 (modificador +2)
-        [InlineData(SettlementType.Homeworld, true, 1, 2, TechStatus.StandardMinus3)] // (2 + 2 = 4) Standard - 3
-        [InlineData(SettlementType.Homeworld, true, 1, 3, TechStatus.StandardMinus2)] // (3 + 2 = 5) Standard - 2
-        [InlineData(SettlementType.Homeworld, true, 1, 5, TechStatus.StandardMinus1)] // (5 + 2 = 7) Standard - 1
-        [InlineData(SettlementType.Homeworld, true, 3, 6, TechStatus.Delayed)] // (6 + 2 = 8) Standard (Delayed)
-        [InlineData(SettlementType.Homeworld, true, 3, 9, TechStatus.Delayed)] // (9 + 2 = 11) Standard (Delayed)
-        [InlineData(SettlementType.Homeworld, true, 2, 10, TechStatus.Standard)] // (10 + 2 = 12) Standard
-        [InlineData(SettlementType.Homeworld, true, 2, 13, TechStatus.Standard)] // (13 + 2 = 15) Standard
-        [InlineData(SettlementType.Homeworld, true, 2, 14, TechStatus.Advanced)] // (14 + 2 = 16) Standard (Advanced)
-        [InlineData(SettlementType.Homeworld, true, 2, 17, TechStatus.Advanced)] // (17 + 2 = 19) Standard (Advanced)
-
-        // Caso 4: Outpost (modificador +3)
-        [InlineData(SettlementType.Outpost, true, 5, 5, TechStatus.Delayed)] // (5 + 4 = 9) Standard (Delayed)
-        [InlineData(SettlementType.Outpost, true, 5, 8, TechStatus.Delayed)] // (8 + 4 = 12) Standard
-        [InlineData(SettlementType.Outpost, true, 5, 15, TechStatus.Advanced)] // (15 + 3 = 18) Standard (Advanced)
-
-        // Caso 5: Colonia con habitabilidad > 6 (sin modificador)
-        [InlineData(SettlementType.Homeworld, true, 7, 10, TechStatus.Delayed)] // (10 + 0 = 10) TL (Delayed)
-        [InlineData(SettlementType.Colony, true, 7, 10, TechStatus.Delayed)] // (10 + 0 = 10) TL (Delayed)
-
-        // Caso 6: Tira alta (16+) siempre es Advanced
-        [InlineData(SettlementType.Colony, true, 7, 16, TechStatus.Advanced)]
-        [InlineData(SettlementType.Homeworld, true, 5, 17, TechStatus.Advanced)]
-        [InlineData(SettlementType.Outpost, true, 3, 15, TechStatus.Advanced)]
+        [MemberData(nameof(GenerateTechStatusTestCases))]
         public void DetermineTechStatus_ShouldReturnExpectedStatus(SettlementType type, bool isInClaimedSpace, int habitability, int roll, TechStatus expected)
         {
             // Arrange
@@ -56,22 +94,16 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
             Assert.Equal(expected, result);
         }
 
+        public static IEnumerable<object[]> PrimitiveWorldsWithOwnTL()
+        {
+            for (int i = 4; i <= ResourceHabitabilityTablesTests.MAXIMUM_HABITABILITY; i++)
+                for (int j = 8; j <= MAX_TL; j++)
+                    foreach (var roll in DiceRollerTests.Valid3dDiceRollValues())
+                        yield return new object[] { TechStatus.Primitive, i, j, roll[0] };
+        }
 
         [Theory]
-        [InlineData(TechStatus.Primitive, 4, 10, 3)]
-        [InlineData(TechStatus.Primitive, 5, 10, 3)]
-        [InlineData(TechStatus.Primitive, 6, 10, 3)]
-        [InlineData(TechStatus.Primitive, 7, 10, 3)]
-        [InlineData(TechStatus.Primitive, 8, 10, 3)]
-        [InlineData(TechStatus.Primitive, 9, 10, 3)]
-        [InlineData(TechStatus.Primitive, 10, 10, 3)]
-        [InlineData(TechStatus.Primitive, 4, 10, 18)]
-        [InlineData(TechStatus.Primitive, 5, 10, 18)]
-        [InlineData(TechStatus.Primitive, 6, 10, 18)]
-        [InlineData(TechStatus.Primitive, 7, 10, 18)]
-        [InlineData(TechStatus.Primitive, 8, 10, 18)]
-        [InlineData(TechStatus.Primitive, 9, 10, 18)]
-        [InlineData(TechStatus.Primitive, 10, 10, 18)]
+        [MemberData(nameof(PrimitiveWorldsWithOwnTL))]
         public void DetermineTechLevel_PrimitiveWorlds_ReturnTLWithinValidRanges(TechStatus status, int habitability, int settingStandardTL, int roll)
         {
             // Act
@@ -81,31 +113,50 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
             Assert.InRange(result, MIN_TL, MAX_PRIMITIVE_TL);
         }
 
+        public static IEnumerable<object[]> WorldsThatNeedAtLeastTL8()
+        {
+            foreach (TechStatus status in Enum.GetValues(typeof(TechStatus)))
+                for (int i = -2; i <= 3; i++)
+                    for (int j = 8; j <= 12; j++)
+                        yield return new object[] { status, i, j };
+        }
 
         [Theory]
-        [InlineData(TechStatus.Primitive, 2, 10)]
-        [InlineData(TechStatus.StandardMinus3, 3, 10)]
-        [InlineData(TechStatus.StandardMinus2, 2, 10)]
-        [InlineData(TechStatus.StandardMinus1, 1, 10)]
-        [InlineData(TechStatus.Delayed, 0, 10)]
-        [InlineData(TechStatus.Standard, -1, 10)]
-        [InlineData(TechStatus.Advanced, -2, 10)]
+        [MemberData(nameof(WorldsThatNeedAtLeastTL8))]
         public void DetermineTechLevel_HabitabilityLessOrEqualsThree_ReturnTLWithinEightAndSettingStandardTL(TechStatus status, int habitability, int settingStandardTL)
         {
             // Act
             int result = TechLevelTables.DetermineTechLevel(status, habitability, settingStandardTL);
 
             // Assert
-            Assert.InRange(result, MIN_HABITABILITY_LESSEQUAL_THREE, settingStandardTL);
+            Assert.InRange(result, MIN_TL_IF_HABITABILITY_LESSEQUAL_THREE, settingStandardTL);
+        }
+
+        public static IEnumerable<object[]> WorldsThatAdjustTLBasedOnStandardTL()
+        {
+            foreach (TechStatus status in Enum.GetValues(typeof(TechStatus)))
+                if (status != TechStatus.Primitive)
+                    for (int i = 4; i <= 10; i++)
+                        for (int j = 8; j <= 12; j++)
+                            switch (status)
+                            {
+                                case TechStatus.StandardMinus3:
+                                    yield return new object[] { status, i, j, j - 3 };
+                                    break;
+                                case TechStatus.StandardMinus2:
+                                    yield return new object[] { status, i, j, j - 2 };
+                                    break;
+                                case TechStatus.StandardMinus1:
+                                    yield return new object[] { status, i, j, j - 1 };
+                                    break;
+                                default:
+                                    yield return new object[] { status, i, j, j };
+                                    break;
+                            }
         }
 
         [Theory]
-        [InlineData(TechStatus.StandardMinus3, 5, 10, 7)]
-        [InlineData(TechStatus.StandardMinus2, 5, 10, 8)]
-        [InlineData(TechStatus.StandardMinus1, 5, 10, 9)]
-        [InlineData(TechStatus.Delayed, 5, 10, 10)]
-        [InlineData(TechStatus.Standard, 5, 10, 10)]
-        [InlineData(TechStatus.Advanced, 5, 10, 10)]
+        [MemberData(nameof(WorldsThatAdjustTLBasedOnStandardTL))]
         public void DetermineTechLevel_Others_ShouldReturnExpectedTL(TechStatus status, int habitability, int settingStandardTL, int expectedTL)
         {
             // Act
@@ -113,6 +164,37 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
 
             // Assert
             Assert.Equal(expectedTL, result);
+        }
+    }
+
+    // Clase para comparar casos de prueba y eliminar duplicados
+    public class TestCaseComparer : IEqualityComparer<object[]>
+    {
+        public bool Equals(object[]? x, object[]? y)
+        {
+            if (x == null || y == null || x.Length != y.Length)
+                return false;
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                if (!object.Equals(x[i], y[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public int GetHashCode(object[] obj)
+        {
+            unchecked
+            {
+                int hash = 17;
+                foreach (var item in obj)
+                {
+                    hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
+                }
+                return hash;
+            }
         }
     }
 }

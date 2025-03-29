@@ -1,36 +1,28 @@
 ﻿using GeneratorLibrary.Generators.Tables.Basic;
+using GeneratorLibrary.Tests.Utils;
+using GeneratorLibrary.Utils;
+using Moq;
 
 namespace GeneratorLibrary.Tests.Generators.Tables.Basic
 {
     public class PopulationTablesTests
     {
+        const double MAX_POPULATION_CONSIDERED = 100_000_000_000_000d;  //100 Trillion (UK/US) | 100 Billion (EU)
+        const int MIN_TECH_FOR_POPULATION = 7;
+        const int MIN_AFFINITY_FOR_POPULATION = 3;
+
+        public static IEnumerable<object[]> PopulationRatingTestData()
+        {
+            for (double i = 1; i < MAX_POPULATION_CONSIDERED; i *= 10)
+            {
+                yield return new object[] { i, (int)Math.Log10(i) };
+                yield return new object[] { i * 10 - 1, (int)Math.Log10(i * 10 - 1) };
+            }
+        }
+
         [Theory]
-        [InlineData(1, 0)]
-        [InlineData(9, 0)]
-        [InlineData(10, 1)]
-        [InlineData(99, 1)]
-        [InlineData(100, 2)]
-        [InlineData(999, 2)]
-        [InlineData(1_000, 3)]
-        [InlineData(9_999, 3)]
-        [InlineData(10_000, 4)]
-        [InlineData(99_999, 4)]
-        [InlineData(100_000, 5)]
-        [InlineData(999_999, 5)]
-        [InlineData(1_000_000, 6)]
-        [InlineData(9_999_999, 6)]
-        [InlineData(10_000_000, 7)]
-        [InlineData(99_999_999, 7)]
-        [InlineData(100_000_000, 8)]
-        [InlineData(999_999_999, 8)]
-        [InlineData(1_000_000_000, 9)]
-        [InlineData(9_999_999_999, 9)]
-        [InlineData(10_000_000_000, 10)]
-        [InlineData(99_999_999_999, 10)]
-        [InlineData(100_000_000_000, 11)]
-        [InlineData(999_999_999_999, 11)]
-        [InlineData(1_000_000_000_000, 12)]
-        [InlineData(9_999_999_999_999, 12)]
+        [InlineData(0, 0)]
+        [MemberData(nameof(PopulationRatingTestData))]
         public void CalculatePopulationRating_ReturnsCorrectPopulationRating(double population, int expected)
         {
             //Act
@@ -41,9 +33,73 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
         }
 
         [Theory]
-        // Cinturón de Asteroides (multiplicador especial)
-        [InlineData(8, 5, 15_000_000_000)] // TL8, Afinidad 5, Asteroides → 15B
-        [InlineData(9, -2, 187_500_000)]   // TL9, Afinidad -2, Asteroides → 187.5M
+        [InlineData(0, 10_000)]
+        [InlineData(1, 100_000)]
+        [InlineData(2, 500_000)]
+        [InlineData(3, 600_000)]
+        [InlineData(4, 700_000)]
+        [InlineData(5, 2_500_000)]
+        [InlineData(6, 5_000_000)]
+        [InlineData(7, 7_500_000)]
+        [InlineData(8, 10_000_000)]
+        [InlineData(9, 15_000_000)]
+        [InlineData(10, 20_000_000)]
+        [InlineData(11, 50_000_000)]
+        [InlineData(12, 50_000_000)]
+        public void GetBaseCapacityBasedOnTL_ReturnsCorrectValue(int techLevel, double expected)
+        {
+            //Act
+            double actual = PopulationTables.GetBaseCapacityBasedOnTL(techLevel);
+
+            //Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData(10, 1_000)]
+        [InlineData(9, 500)]
+        [InlineData(8, 250)]
+        [InlineData(7, 130)]
+        [InlineData(6, 60)]
+        [InlineData(5, 30)]
+        [InlineData(4, 15)]
+        [InlineData(3, 8)]
+        [InlineData(2, 4)]
+        [InlineData(1, 2)]
+        [InlineData(0, 1)]
+        [InlineData(-1, 0.5)]
+        [InlineData(-2, 0.25)]
+        [InlineData(-3, 0.13)]
+        [InlineData(-4, 0.06)]
+        [InlineData(-5, 0.03)]
+        public void GetAffinityMultiplier_ReturnsCorrectValue(int affinity, double expected)
+        {
+            //Act
+            double actual = PopulationTables.GetAffinityMultiplier(affinity);
+
+            //Assert
+            Assert.Equal(expected, actual);
+        }
+
+
+        public static IEnumerable<object[]> AsteroidBeltCarryingCapacityTestData()
+        {
+            for (int i = TechLevelTablesTests.MIN_TL; i <= TechLevelTablesTests.MAX_TL; i++)
+                for (int j = ResourceHabitabilityTablesTests.MINIMUM_AFFINITY; j < ResourceHabitabilityTablesTests.MAXIMUM_AFFINITY; j++)
+                {
+                    if (i <= MIN_TECH_FOR_POPULATION && j <= MIN_AFFINITY_FOR_POPULATION)
+                        yield return new object[] { i, j, 0 };
+                    else
+                        yield return new object[] {
+                        i,
+                        j,
+                        PopulationTables.RoundToThousands(PopulationTables.GetBaseCapacityBasedOnTL(i) * PopulationTables.GetAffinityMultiplier(j) * 50)
+                    };
+                }
+        }
+
+        [Theory]
+        [MemberData(nameof(AsteroidBeltCarryingCapacityTestData))]
         public void CalculateAsteroidCarryingCapacity_ShouldReturnExpectedValue(int techLevel, int affinity, double expected)
         {
             // Act
@@ -53,16 +109,29 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
             Assert.Equal(expected, result);
         }
 
-        [Theory]
-        // Casos con Carrying Capacity 0
-        [InlineData(7, 3, 1.0, 0)]
-        [InlineData(6, 2, 1.0, 0)]
+        public static IEnumerable<object[]> Worlds_NoAsteroid_CarryingCapacityTestData()
+        {
+            for (int i = TechLevelTablesTests.MIN_TL; i <= TechLevelTablesTests.MAX_TL; i++)
+                for (int j = ResourceHabitabilityTablesTests.MINIMUM_AFFINITY; j <= ResourceHabitabilityTablesTests.MAXIMUM_AFFINITY; j++)
+                    for (double k = 0.0; k <= 2.0; k += 0.1)
+                    {
+                        if (i <= MIN_TECH_FOR_POPULATION && j <= MIN_AFFINITY_FOR_POPULATION)
+                            yield return new object[] { i, j, k, 0 };
+                        else
+                            yield return new object[] {
+                            i,
+                            j,
+                            k,
+                            PopulationTables.RoundToThousands(
+                                PopulationTables.GetBaseCapacityBasedOnTL(i) *
+                                PopulationTables.GetAffinityMultiplier(j) *
+                                Math.Pow(k, 2))
+                        };
+                    }
+        }
 
-        // Casos normales con diferentes TL, afinidades y diámetros
-        [InlineData(8, 5, 1.0, 300_000_000)]  // TL8, Afinidad 5, Diámetro 1.0 → 300M
-        [InlineData(9, 6, 1.2, 1_296_000_000)] // TL9, Afinidad 6, Diámetro 1.2 → 1.3B
-        [InlineData(10, 4, 0.8, 192_000_000)]  // TL10, Afinidad 4, Diámetro 0.8 → 192M
-        [InlineData(10, 0, 1.0, 20_000_000)]  // TL10, Afinidad 0, Diámetro 1.0 → 20M
+        [Theory]
+        [MemberData(nameof(Worlds_NoAsteroid_CarryingCapacityTestData))]
         public void CalculateCarryingCapacity_ShouldReturnExpectedValue(int techLevel, int affinity, double diameter, double expected)
         {
             // Act
@@ -72,11 +141,33 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
             Assert.Equal(expected, result);
         }
 
+        public static IEnumerable<object[]> HomeworldPopulationTL4OrLessTestData()
+        {
+            for (double carryingCapacity = 1_000; carryingCapacity <= MAX_POPULATION_CONSIDERED; carryingCapacity *= 10)
+                for (int techLevel = TechLevelTablesTests.MIN_TL; techLevel <= 4; techLevel++)
+                    foreach (object[] roll in DiceRollerTests.Valid2dDiceRollValues())
+                        yield return new object[] {
+                            carryingCapacity,
+                            techLevel,
+                            roll[0],
+                            ((int)roll[0] + 3) / 10.0 * carryingCapacity };
+        }
+
+        public static IEnumerable<object[]> HomeworldPopulationTL5OrMoreTestData()
+        {
+            for (double carryingCapacity = 1_000; carryingCapacity <= MAX_POPULATION_CONSIDERED; carryingCapacity *= 10)
+                for (int techLevel = 5; techLevel <= TechLevelTablesTests.MAX_TL; techLevel++)
+                    foreach (object[] roll in DiceRollerTests.Valid2dDiceRollValues())
+                        yield return new object[] {
+                            carryingCapacity,
+                            techLevel,
+                            roll[0],
+                            PopulationTables.RoundToThousands(carryingCapacity * 10 / (int)roll[0]) };
+        }
+
         [Theory]
-        [InlineData(1_000_000, 4, 2, 500_000)]   // TL4, Mínimo dado (50% de la capacidad)
-        [InlineData(1_000_000, 4, 12, 1_500_000)] // TL4, Máximo dado (150% de la capacidad)
-        [InlineData(10_000_000, 8, 2, 50_000_000)] // TL8, Mínimo dado (Capacidad * 10 / roll)
-        [InlineData(10_000_000, 8, 12, 8_333_000)] // TL8, Máximo dado (Capacidad * 10 / roll)
+        [MemberData(nameof(HomeworldPopulationTL4OrLessTestData))]
+        [MemberData(nameof(HomeworldPopulationTL5OrMoreTestData))]
         public void GenerateHomeworldPopulation_ShouldReturnValidPopulation(double carryingCapacity, int techLevel, int roll, double expectedPopulation)
         {
             // Act
@@ -86,11 +177,48 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
             Assert.Equal(expectedPopulation, result);
         }
 
+        public static IEnumerable<object[]> ColonyPopulationTestData()
+        {
+            foreach (object[] roll in DiceRollerTests.Valid3dDiceRollValues())
+                for (int i = ResourceHabitabilityTablesTests.MINIMUM_AFFINITY; i <= ResourceHabitabilityTablesTests.MAXIMUM_AFFINITY; i++)
+                    for (int j = 0; j <= 250; j += 10)
+                    {
+                        int modifier = i * 3 + j / 10;
+                        int finalRoll = (int)roll[0] + modifier;
+
+                        if (finalRoll <= 25)
+                            yield return new object[] {
+                            i,
+                            roll[0],
+                            j,
+                            10_000 };
+                        else if (PopulationTables.GetColonyBasicPopulation().TryGetValue(finalRoll, out double value))
+                            yield return new object[] {
+                            i,
+                            roll[0],
+                            j,
+                            value };
+                        else
+                        {
+                            int e10 = 0;
+
+                            while (!PopulationTables.GetColonyBasicPopulation().ContainsKey(finalRoll))
+                            {
+                                e10++;
+                                finalRoll -= 10;
+                            }
+                            yield return new object[] {
+                            i,
+                            roll[0],
+                            j,
+                            PopulationTables.GetColonyBasicPopulation()[finalRoll] * Math.Pow(10, e10) };
+                        }
+                    }
+
+        }
+
         [Theory]
-        [InlineData(3, 3, 50, 10_000)]  // Baja afinidad, mínimo dado, colonia reciente
-        [InlineData(3, 18, 50, 50_000)] // Baja afinidad, máximo dado
-        [InlineData(7, 3, 500, 800_000_000)]  // Alta afinidad, mínimo dado, colonia antigua
-        [InlineData(7, 18, 500, 25_000_000_000)] // Alta afinidad, máximo dado
+        [MemberData(nameof(ColonyPopulationTestData))]
         public void GenerateColonyPopulation_ShouldReturnExpectedPopulation(int affinity, int roll, int yearsSinceFounded, double expectedPopulation)
         {
             // Act
@@ -100,29 +228,27 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
             Assert.Equal(expectedPopulation, result);
         }
 
+        public static IEnumerable<object[]> OutpostPopulationTestData()
+        {
+            foreach (object[] roll in DiceRollerTests.Valid3dDiceRollValues())
+                for (double i = -0.25; i <= 0.25; i += 0.01)
+                {
+                    PopulationTables.GetOutpostBasicPopulation().TryGetValue((int)roll[0], out double baseValue);
+                    yield return new object[] {
+                        roll[0],
+                        i,
+                        Math.Round(baseValue * 0.75,0),
+                        Math.Round(baseValue * 1.25,0)
+                    };
+                }
+        }
 
         [Theory]
-        [InlineData(3, 75, 125)]
-        [InlineData(4, 113, 188)]
-        [InlineData(5, 188, 313)]
-        [InlineData(6, 300, 500)]
-        [InlineData(7, 450, 750)]
-        [InlineData(8, 750, 1_250)]
-        [InlineData(9, 1_125, 1_875)]
-        [InlineData(10, 1_875, 3_125)]
-        [InlineData(11, 3_000, 5_000)]
-        [InlineData(12, 4_500, 7_500)]
-        [InlineData(13, 7_500, 12_500)]
-        [InlineData(14, 11_250, 18_750)]
-        [InlineData(15, 18_750, 31_250)]
-        [InlineData(16, 30_000, 50_000)]
-        [InlineData(17, 45_000, 75_000)]
-        [InlineData(18, 75_000, 125_000)]
-
-        public void GenerateOutpostPopulation_ShouldApplyVariationAndClampCorrectly(int roll, double minExpected, double maxExpected)
+        [MemberData(nameof(OutpostPopulationTestData))]
+        public void GenerateOutpostPopulation_ShouldApplyVariationAndClampCorrectly(int roll, double variationFactor, double minExpected, double maxExpected)
         {
             // Act
-            double result = PopulationTables.GenerateOutpostPopulation(roll);
+            double result = PopulationTables.GenerateOutpostPopulation(roll, variationFactor);
 
             // Assert
             Assert.InRange(result, minExpected, maxExpected);

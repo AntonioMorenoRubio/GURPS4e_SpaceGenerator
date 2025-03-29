@@ -4,7 +4,7 @@ namespace GeneratorLibrary.Generators.Tables.Basic
 {
     public static class ClimateTables
     {
-        public static double GenerateAverageSurfaceTemperatureInKelvinsByWorldType(WorldSize size, WorldSubType subType)
+        public static double GenerateAverageSurfaceTemperatureInKelvinsByWorldType(WorldSize size, WorldSubType subType, int roll)
         {
             // Definir rangos y pasos según el tipo de mundo
             (double min, double max, double step) = (size, subType) switch
@@ -33,8 +33,7 @@ namespace GeneratorLibrary.Generators.Tables.Basic
                 _ => throw new ArgumentOutOfRangeException($"No temperature rule for {size} {subType}")
             };
 
-            int baseRoll = DiceRoller.Instance.Roll(3, -3);
-            double temperature = min + baseRoll * step;
+            double temperature = min + roll * step;
             double variation = Random.Shared.NextDouble() * step - step / 2;
             temperature += variation;
 

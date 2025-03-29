@@ -1,11 +1,12 @@
 ﻿using GeneratorLibrary.Generators.Tables.Advanced;
 using GeneratorLibrary.Models.Advanced;
+using GeneratorLibrary.Utils;
 
 namespace GeneratorLibrary.Generators
 {
     public class StarSystemGenerator
     {
-        private readonly DiceRoller _diceRoller = DiceRoller.Instance;
+        private readonly DiceRoller _diceRoller = new();
 
         public StarSystemGenerator() { }
         public StarSystemGenerator(int seed)
@@ -34,7 +35,9 @@ namespace GeneratorLibrary.Generators
 
             if (starSystem.Stars.Count > 1)
                 for (int i = 1; i < starSystem.Stars.Count; i++)
-                    starSystem.Stars[i].Mass = SolarMassesTable.GetCompanionStarMass(starSystem.Stars[0].Mass);
+                    starSystem.Stars[i].Mass = SolarMassesTable.GetCompanionStarMass
+                        (starSystem.Stars[0].Mass,
+                        _diceRoller);
 
             return starSystem;
         }

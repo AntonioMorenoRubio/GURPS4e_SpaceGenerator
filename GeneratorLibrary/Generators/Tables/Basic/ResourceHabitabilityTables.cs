@@ -91,8 +91,10 @@ namespace GeneratorLibrary.Generators.Tables.Basic
             }
 
             // 2️. Modificadores por Hidrografía (Solo agua líquida)
-            if (world.HydrographicCoverage is null || world.HydrographicCoverage.Coverage == 0d ||
-                world.HydrographicCoverage.Composition.Contains("Liquid Water") != true)
+            const double _TOLERANCE = 1e-6;
+            if (world.HydrographicCoverage is null ||
+                Math.Abs(world.HydrographicCoverage.Coverage - _TOLERANCE) < _TOLERANCE ||
+                !world.HydrographicCoverage.Composition.Contains("Liquid Water"))
                 modifiers.Add(0);
             else
                 modifiers.Add(world.HydrographicCoverage?.Coverage switch

@@ -1,10 +1,11 @@
 ﻿using GeneratorLibrary.Models.Basic;
+using GeneratorLibrary.Utils;
 
 namespace GeneratorLibrary.Generators.Tables.Basic
 {
     public static class HydrographicCoverageTables
     {
-        public static double GenerateHydrographicCoverage(WorldSize size, WorldSubType subType)
+        public static double GenerateHydrographicCoverage(WorldSize size, WorldSubType subType, IDiceRoller diceRoller)
         {
             // Definir límites de cobertura según el tipo de mundo
             (double min, double max) = (size, subType) switch
@@ -37,17 +38,17 @@ namespace GeneratorLibrary.Generators.Tables.Basic
             // Determinar la cobertura base con los valores de dados
             double coverage = (size, subType) switch
             {
-                (WorldSize.Small, WorldSubType.Ice) => DiceRoller.Instance.Roll(1, 2) * 10.0,
-                (WorldSize.Standard, WorldSubType.Ammonia) => DiceRoller.Instance.Roll(2) * 10.0,
-                (WorldSize.Large, WorldSubType.Ammonia) => DiceRoller.Instance.Roll(2) * 10.0,
-                (WorldSize.Standard, WorldSubType.Ice) => DiceRoller.Instance.Roll(2, -10) * 10.0,
-                (WorldSize.Large, WorldSubType.Ice) => DiceRoller.Instance.Roll(2, -10) * 10.0,
-                (WorldSize.Standard, WorldSubType.Ocean) => DiceRoller.Instance.Roll(1, 4) * 10.0,
-                (WorldSize.Standard, WorldSubType.Garden) => DiceRoller.Instance.Roll(1, 4) * 10.0,
-                (WorldSize.Large, WorldSubType.Ocean) => DiceRoller.Instance.Roll(1, 6) * 10.0,
-                (WorldSize.Large, WorldSubType.Garden) => DiceRoller.Instance.Roll(1, 6) * 10.0,
-                (WorldSize.Standard, WorldSubType.Greenhouse) => DiceRoller.Instance.Roll(2, -7) * 10.0,
-                (WorldSize.Large, WorldSubType.Greenhouse) => DiceRoller.Instance.Roll(2, -7) * 10.0,
+                (WorldSize.Small, WorldSubType.Ice) => diceRoller.Roll(1, 2) * 10.0,
+                (WorldSize.Standard, WorldSubType.Ammonia) => diceRoller.Roll(2) * 10.0,
+                (WorldSize.Large, WorldSubType.Ammonia) => diceRoller.Roll(2) * 10.0,
+                (WorldSize.Standard, WorldSubType.Ice) => diceRoller.Roll(2, -10) * 10.0,
+                (WorldSize.Large, WorldSubType.Ice) => diceRoller.Roll(2, -10) * 10.0,
+                (WorldSize.Standard, WorldSubType.Ocean) => diceRoller.Roll(1, 4) * 10.0,
+                (WorldSize.Standard, WorldSubType.Garden) => diceRoller.Roll(1, 4) * 10.0,
+                (WorldSize.Large, WorldSubType.Ocean) => diceRoller.Roll(1, 6) * 10.0,
+                (WorldSize.Large, WorldSubType.Garden) => diceRoller.Roll(1, 6) * 10.0,
+                (WorldSize.Standard, WorldSubType.Greenhouse) => diceRoller.Roll(2, -7) * 10.0,
+                (WorldSize.Large, WorldSubType.Greenhouse) => diceRoller.Roll(2, -7) * 10.0,
 
                 _ => 0.0 // Los mundos con cobertura fija en 0% ya fueron filtrados en la primera switch
             };

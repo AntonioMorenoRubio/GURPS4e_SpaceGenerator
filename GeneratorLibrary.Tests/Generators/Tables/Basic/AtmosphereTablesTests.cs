@@ -1,11 +1,67 @@
 ﻿using GeneratorLibrary.Generators.Tables.Basic;
 using GeneratorLibrary.Models.Basic;
+using GeneratorLibrary.Tests.Utils;
+using Moq;
 
 namespace GeneratorLibrary.Tests.Generators.Tables.Basic
 {
     public class AtmosphereTablesTests
     {
-        public static IEnumerable<object[]> WorldsWithAtmosphericComposition => new List<object[]>
+        #region TestData
+        public static IEnumerable<object[]> WorldsWithoutAtmosphere => new List<object[]>
+        {
+        new object [] { WorldSize.Special, WorldSubType.AsteroidBelt },
+        new object [] { WorldSize.Tiny, WorldSubType.Ice },
+        new object [] { WorldSize.Tiny, WorldSubType.Rock },
+        new object [] { WorldSize.Tiny, WorldSubType.Sulfur },
+        new object [] { WorldSize.Small, WorldSubType.Hadean },
+        new object [] { WorldSize.Small, WorldSubType.Rock },
+        new object [] { WorldSize.Standard, WorldSubType.Hadean },
+        new object [] { WorldSize.Standard, WorldSubType.Chthonian },
+        new object [] { WorldSize.Large, WorldSubType.Chthonian },
+        };
+
+        public static IEnumerable<object[]> WorldsWithoutAtmosphereRollTestData()
+        {
+            foreach (var world in WorldsWithoutAtmosphere)
+                foreach (var roll in DiceRollerTests.AllTestDiceRolls())
+                    yield return world.Append(roll[0]).ToArray();
+        }
+
+        public static IEnumerable<object[]> WorldsWithAtmosphere => new List<object[]>
+        {
+        new object [] { WorldSize.Small, WorldSubType.Ice },
+        new object [] { WorldSize.Standard, WorldSubType.Greenhouse },
+        new object [] { WorldSize.Standard, WorldSubType.Ammonia },
+        new object [] { WorldSize.Standard, WorldSubType.Ocean },
+        new object [] { WorldSize.Standard, WorldSubType.Ice },
+        new object [] { WorldSize.Large, WorldSubType.Ammonia },
+        new object [] { WorldSize.Large, WorldSubType.Greenhouse },
+        new object [] { WorldSize.Large, WorldSubType.Ocean },
+        new object [] { WorldSize.Large, WorldSubType.Ice },
+        new object [] { WorldSize.Standard, WorldSubType.Garden },
+        new object [] { WorldSize.Large, WorldSubType.Garden },
+        new object [] { WorldSize.Special, WorldSubType.GasGiant }
+        };
+
+        public static IEnumerable<object[]> WorldsWithAtmosphere_ValidRollTestData()
+        {
+            foreach (var world in WorldsWithAtmosphere)
+                foreach (var roll in DiceRollerTests.Valid3dDiceRollValues())
+                    yield return world.Append(roll[0]).ToArray();
+        }
+
+        public static IEnumerable<object[]> WorldsWithAtmosphere_InvalidRollTestData()
+        {
+            foreach (var world in WorldsWithAtmosphere)
+                foreach (var roll in DiceRollerTests.Invalid3dDiceRollValues())
+                    yield return world.Append(roll[0]).ToArray();
+        }
+
+        public const double MINIMUM_MASS = 3 / 10.0 - 0.05;
+        public const double MAXIMUM_MASS = 18 / 10.0 + 0.05;
+
+        public static IEnumerable<object[]> AtmosphericCompositionForWorlds => new List<object[]>
         {
             new object[] { WorldSize.Small, WorldSubType.Ice, new List<string> { "Nitrogen", "Methane" } },
             new object[] { WorldSize.Standard, WorldSubType.Ammonia, new List<string> { "Nitrogen", "Ammonia","Methane" } },
@@ -21,7 +77,7 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
             new object[] { WorldSize.Special, WorldSubType.GasGiant, new List<string> { "Hydrogen", "Helium" } }
         };
 
-        public static IEnumerable<object[]> WorldsWithAtmosphereCharacteristics => new List<object[]>
+        public static IEnumerable<object[]> AtmosphereCharacteristicsForWorlds => new List<object[]>
         {
             new object[] { WorldSize.Small, WorldSubType.Ice, 15, new List<AtmosphereCharacteristic>
                 { AtmosphereCharacteristic.Suffocating, AtmosphereCharacteristic.MildlyToxic } },
@@ -131,47 +187,36 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
                 new List<AtmosphereCharacteristic>()
             }
         };
-
+        #endregion
 
         [Theory]
-        [InlineData(WorldSize.Special, WorldSubType.AsteroidBelt)]
-        [InlineData(WorldSize.Tiny, WorldSubType.Ice)]
-        [InlineData(WorldSize.Tiny, WorldSubType.Rock)]
-        [InlineData(WorldSize.Tiny, WorldSubType.Sulfur)]
-        [InlineData(WorldSize.Small, WorldSubType.Hadean)]
-        [InlineData(WorldSize.Small, WorldSubType.Rock)]
-        [InlineData(WorldSize.Standard, WorldSubType.Hadean)]
-        [InlineData(WorldSize.Standard, WorldSubType.Chthonian)]
-        [InlineData(WorldSize.Large, WorldSubType.Chthonian)]
-        public void AtmosphereTables_WorldType_AssignZeroMass(WorldSize size, WorldSubType subType)
+        [MemberData(nameof(WorldsWithoutAtmosphereRollTestData))]
+        public void AtmosphereTables_WorldType_AssignZeroMass(WorldSize size, WorldSubType subType, int roll)
         {
             //Act
-            double mass = AtmosphereTables.GenerateMass(size, subType);
+            double mass = AtmosphereTables.GenerateMass(size, subType, roll);
 
             //Assert
             Assert.Equal(0f, mass);
         }
 
         [Theory]
-        [InlineData(WorldSize.Small, WorldSubType.Ice)]
-        [InlineData(WorldSize.Standard, WorldSubType.Greenhouse)]
-        [InlineData(WorldSize.Standard, WorldSubType.Ammonia)]
-        [InlineData(WorldSize.Standard, WorldSubType.Ocean)]
-        [InlineData(WorldSize.Standard, WorldSubType.Ice)]
-        [InlineData(WorldSize.Large, WorldSubType.Ammonia)]
-        [InlineData(WorldSize.Large, WorldSubType.Greenhouse)]
-        [InlineData(WorldSize.Large, WorldSubType.Ocean)]
-        [InlineData(WorldSize.Large, WorldSubType.Ice)]
-        [InlineData(WorldSize.Standard, WorldSubType.Garden)]
-        [InlineData(WorldSize.Large, WorldSubType.Garden)]
-        [InlineData(WorldSize.Special, WorldSubType.GasGiant)]
-        public void AtmosphereTables_WorldType_GenerateCorrectRandomMass(WorldSize size, WorldSubType subType)
+        [MemberData(nameof(WorldsWithAtmosphere_ValidRollTestData))]
+        public void AtmosphereTables_WorldType_ValidRoll_GenerateCorrectRandomMass(WorldSize size, WorldSubType subType, int roll)
         {
             //Act
-            double mass = AtmosphereTables.GenerateMass(size, subType);
+            double mass = AtmosphereTables.GenerateMass(size, subType, roll);
 
             //Assert
-            Assert.InRange(mass, 0.25f, 1.85f);
+            Assert.InRange(mass, MINIMUM_MASS, MAXIMUM_MASS);
+        }
+
+        [Theory]
+        [MemberData(nameof(WorldsWithAtmosphere_InvalidRollTestData))]
+        public void AtmosphereTables_WorldType_InvalidRoll_ThrowsArgumentOutOfRangeException(WorldSize size, WorldSubType subType, int roll)
+        {
+            //Act && Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => AtmosphereTables.GenerateMass(size, subType, roll));
         }
 
         [Theory]
@@ -213,7 +258,7 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
         }
 
         [Theory]
-        [MemberData(nameof(WorldsWithAtmosphericComposition))]
+        [MemberData(nameof(AtmosphericCompositionForWorlds))]
         public void GetComposition_WorldsWithAtmosphere_ShouldReturnComposition(WorldSize size, WorldSubType subType, List<string> expected)
         {
             //Act
@@ -228,7 +273,7 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
         }
 
         [Theory]
-        [MemberData(nameof(WorldsWithAtmosphereCharacteristics))]
+        [MemberData(nameof(AtmosphereCharacteristicsForWorlds))]
         public void GenerateCharacteristics_WorldsWithAtmosphere_ShouldReturnPossibleCharacteristics(WorldSize size, WorldSubType subType, int roll, List<AtmosphereCharacteristic> expected)
         {
             //Act
@@ -269,10 +314,7 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
         }
 
         [Theory]
-        [InlineData(2)]
-        [InlineData(19)]
-        [InlineData(0)]
-        [InlineData(-1)]
+        [MemberData(nameof(DiceRollerTests.Invalid3dDiceRollValues), MemberType = typeof(DiceRollerTests))]
         public void GenerateMarginalAtmosphere_InvalidRoll_ShouldThrowArgumentOutOfRangeException(int invalidRoll)
         {
             // Act & Assert
@@ -344,7 +386,7 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
         [InlineData(WorldSize.Large, WorldSubType.Garden, 2.0, 4.0, 40.0)]
         [InlineData(WorldSize.Large, WorldSubType.Greenhouse, 2.0, 2.0, 2000.0)]
         public void GenerateAtmosphericPressure_ShouldReturnExpectedPressure(
-        WorldSize size, WorldSubType subType, double atmosphereMass, double surfaceGravity, double expectedPressure)
+            WorldSize size, WorldSubType subType, double atmosphereMass, double surfaceGravity, double expectedPressure)
         {
             // Act
             double result = AtmosphereTables.GenerateAtmosphericPressure(size, subType, atmosphereMass, surfaceGravity);
@@ -362,13 +404,23 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
 
         [Theory]
         [InlineData(0.005, PressureCategory.Trace)]
+        [InlineData(0.009, PressureCategory.Trace)]
         [InlineData(0.01, PressureCategory.VeryThin)]
-        [InlineData(0.5, PressureCategory.VeryThin)]
-        [InlineData(0.75, PressureCategory.Thin)]
+        [InlineData(0.509, PressureCategory.VeryThin)]
+        [InlineData(0.51, PressureCategory.Thin)]
+        [InlineData(0.809, PressureCategory.Thin)]
+        [InlineData(0.81, PressureCategory.Standard)]
         [InlineData(1.0, PressureCategory.Standard)]
-        [InlineData(1.3, PressureCategory.Dense)]
+        [InlineData(1.209, PressureCategory.Standard)]
+        [InlineData(1.21, PressureCategory.Dense)]
+        [InlineData(1.509, PressureCategory.Dense)]
+        [InlineData(1.51, PressureCategory.VeryDense)]
         [InlineData(5.0, PressureCategory.VeryDense)]
+        [InlineData(10.0, PressureCategory.VeryDense)]
+        [InlineData(10.001, PressureCategory.Superdense)]
         [InlineData(20.0, PressureCategory.Superdense)]
+        [InlineData(50.0, PressureCategory.Superdense)]
+        [InlineData(100.0, PressureCategory.Superdense)]
         public void GetPressureCategory_ShouldReturnCorrectCategory(double pressure, PressureCategory expectedCategory)
         {
             // Act
@@ -385,6 +437,5 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
             // Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => AtmosphereTables.GetPressureCategory(pressure));
         }
-
     }
 }

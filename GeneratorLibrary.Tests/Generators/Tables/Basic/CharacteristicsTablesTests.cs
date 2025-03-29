@@ -1,5 +1,7 @@
 ﻿using GeneratorLibrary.Generators.Tables.Basic;
 using GeneratorLibrary.Models.Basic;
+using GeneratorLibrary.Utils;
+using Moq;
 
 namespace GeneratorLibrary.Tests.Generators.Tables.Basic
 {
@@ -25,11 +27,18 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
         [InlineData(WorldSize.Large, WorldSubType.Chthonian, 0.8d, 1.2d)]
         public void GenerateWorldDensity_ReturnsCorrectDensityRange(WorldSize size, WorldSubType subType, double minDensity, double maxDensity)
         {
+            //Arrange
+            Mock<IDiceRoller> mockDiceRoller = new Mock<IDiceRoller>();
+            mockDiceRoller.Setup(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>())).Returns(3);
+            IDiceRoller diceRoller = mockDiceRoller.Object;
+            int roll = diceRoller.Roll();
+
             // Act
-            double density = CharacteristicsTables.GenerateWorldDensity(size, subType);
+            double density = CharacteristicsTables.GenerateWorldDensity(size, subType, roll);
 
             // Assert
             Assert.InRange(density, minDensity, maxDensity);
+            mockDiceRoller.Verify(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>()), Times.Once);
         }
 
         [Theory]
@@ -40,12 +49,19 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Basic
         public void GenerateWorldDiameter_ShouldReturnValidRange(
             WorldSize size, double blackbodyTemperature, double density, double minSize, double maxSize)
         {
+            //Arrange
+            Mock<IDiceRoller> mockDiceRoller = new Mock<IDiceRoller>();
+            mockDiceRoller.Setup(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>())).Returns(3);
+            IDiceRoller diceRoller = mockDiceRoller.Object;
+            int roll = diceRoller.Roll();
+
             // Act
-            double result = CharacteristicsTables.GenerateWorldDiameter(size, blackbodyTemperature, density);
+            double result = CharacteristicsTables.GenerateWorldDiameter(size, blackbodyTemperature, density, roll);
 
             // Assert
             Assert.InRange(result, Math.Sqrt(blackbodyTemperature / density) * minSize,
                                      Math.Sqrt(blackbodyTemperature / density) * maxSize);
+            mockDiceRoller.Verify(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>()), Times.Once);
         }
 
         [Theory]

@@ -5,6 +5,47 @@ namespace GeneratorLibrary.Tests.Utils;
 
 public class DiceRollerTests
 {
+    public static IEnumerable<object[]> Valid1dDiceRollValues()
+    {
+        for (int diceRoll = 1; diceRoll <= 6; diceRoll++)
+        {
+            yield return new object[] { diceRoll };
+        }
+    }
+    public static IEnumerable<object[]> Valid2dDiceRollValues()
+    {
+        for (int diceRoll = 2; diceRoll <= 12; diceRoll++)
+        {
+            yield return new object[] { diceRoll };
+        }
+    }
+
+    public static IEnumerable<object[]> Valid3dDiceRollValues()
+    {
+        for (int diceRoll = 3; diceRoll <= 18; diceRoll++)
+        {
+            yield return new object[] { diceRoll };
+        }
+    }
+
+    public static IEnumerable<object[]> Invalid3dDiceRollValues() => new List<object[]>
+    {
+        new object[] { 2 },
+        new object[] { 1 },
+        new object[] { 0 },
+        new object[] { -1 },
+        new object[] { -2 },
+        new object[] { 19 },
+        new object[] { 20 },
+        new object[] { 21 },
+        new object[] { 22 },
+        new object[] { int.MinValue },
+        new object[] { int.MaxValue }
+    };
+
+    public static IEnumerable<object[]> AllTestDiceRolls() => Valid3dDiceRollValues().Union(Invalid3dDiceRollValues());
+
+
     [Theory]
     [InlineData(10)]
     [InlineData(100)]
@@ -129,27 +170,7 @@ public class DiceRollerTests
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(3)]
-    [InlineData(4)]
-    [InlineData(5)]
-    [InlineData(6)]
-    [InlineData(7)]
-    [InlineData(8)]
-    [InlineData(9)]
-    [InlineData(10)]
-    [InlineData(11)]
-    [InlineData(12)]
-    [InlineData(13)]
-    [InlineData(14)]
-    [InlineData(15)]
-    [InlineData(16)]
-    [InlineData(17)]
-    [InlineData(18)]
-    [InlineData(int.MinValue)]
-    [InlineData(int.MaxValue)]
+    [MemberData(nameof(AllTestDiceRolls))]
     public void Roll_MockedDiceRoller_ShouldReturnValueToMock(int valueToMock)
     {
         //Arrange

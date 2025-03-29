@@ -1,10 +1,23 @@
 using GeneratorLibrary.Generators.Tables.Basic;
 using GeneratorLibrary.Models.Basic;
+using GeneratorLibrary.Tests.Utils;
 
 namespace GeneratorLibrary.Tests.Generators.Tables.Basic
 {
     public class WorldTypeTablesTests
     {
+        public static IEnumerable<object[]> GasGiantWorldData => new List<object[]>
+        {
+            new object[] { WorldSize.Special, WorldSubType.GasGiant }
+        };
+
+        public static IEnumerable<object[]> GasGiantWithRollsTestData()
+        {
+            foreach (var world in GasGiantWorldData)
+                foreach (var diceRoll in DiceRollerTests.AllTestDiceRolls())
+                    yield return world.Append(diceRoll[0]).ToArray();
+        }
+
         [Theory]
         [InlineData(1, "Hostile")]
         [InlineData(2, "Hostile")]

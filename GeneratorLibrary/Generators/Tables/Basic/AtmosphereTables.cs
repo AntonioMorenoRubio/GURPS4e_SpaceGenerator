@@ -55,13 +55,16 @@ namespace GeneratorLibrary.Generators.Tables.Basic
             }
         };
 
-        public static double GenerateMass(WorldSize size, WorldSubType subType)
+        public static double GenerateMass(WorldSize size, WorldSubType subType, int roll)
         {
             if (_NoAtmosphereWorlds.Contains((size, subType)))
                 return 0;
 
+            if (roll < 3 || roll > 18)
+                throw new ArgumentOutOfRangeException(nameof(roll), $"Valor {roll} fuera del rango permitido (3-18) para generar masa atmosférica.");
+
             double variation = Random.Shared.NextDouble() * 0.1f - 0.05f;
-            return Math.Round(DiceRoller.Instance.Roll() / 10.0 + variation, 2);
+            return Math.Round(roll / 10.0 + variation, 2);
         }
 
         public static List<string> GetComposition(WorldSize size, WorldSubType subType) =>
@@ -209,13 +212,13 @@ namespace GeneratorLibrary.Generators.Tables.Basic
 
         public static PressureCategory GetPressureCategory(double pressure) => pressure switch
         {
-            < 0.01f => PressureCategory.Trace,
-            >= 0.01f and <= 0.5f => PressureCategory.VeryThin,
-            > 0.5f and <= 0.8f => PressureCategory.Thin,
-            > 0.8f and <= 1.2f => PressureCategory.Standard,
-            > 1.2f and <= 1.5f => PressureCategory.Dense,
-            > 1.5f and <= 10f => PressureCategory.VeryDense,
-            > 10f => PressureCategory.Superdense,
+            < 0.01 => PressureCategory.Trace,
+            >= 0.01 and < 0.51 => PressureCategory.VeryThin,
+            >= 0.5 and < 0.81 => PressureCategory.Thin,
+            >= 0.8 and < 1.21 => PressureCategory.Standard,
+            >= 1.2 and < 1.51 => PressureCategory.Dense,
+            >= 1.5 and <= 10 => PressureCategory.VeryDense,
+            > 10 => PressureCategory.Superdense,
             _ => throw new ArgumentOutOfRangeException($"Invalid pressure to get atmospheric pressure category: {pressure}")
         };
     }

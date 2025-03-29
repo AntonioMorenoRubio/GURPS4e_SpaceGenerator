@@ -1,4 +1,6 @@
-﻿namespace GeneratorLibrary.Generators.Tables.Advanced
+﻿using GeneratorLibrary.Utils;
+
+namespace GeneratorLibrary.Generators.Tables.Advanced
 {
     public static class SolarMassesTable
     {
@@ -114,7 +116,7 @@
 
         public static double GetPrimaryStarMass(int roll1, int roll2) => _massTable[(roll1, roll2)];
 
-        public static double GetCompanionStarMass(double primaryStarMass)
+        public static double GetCompanionStarMass(double primaryStarMass, IDiceRoller diceRoller)
         {
             double _MINIMUM_MASS = 0.10;
             double _TOLERANCE = 1e-6;
@@ -122,12 +124,12 @@
             if (Math.Abs(_MINIMUM_MASS - primaryStarMass) < _TOLERANCE)
                 return _MINIMUM_MASS;
 
-            int stepRoll = DiceRoller.Instance.Roll(1, -1);
+            int stepRoll = diceRoller.Roll(1, -1);
 
             if (stepRoll == 0)
                 return primaryStarMass;
 
-            stepRoll = DiceRoller.Instance.Roll(stepRoll);
+            stepRoll = diceRoller.Roll(stepRoll);
 
             KeyValuePair<(int, int), double> key = _massTable.FirstOrDefault(
                 x => Math.Abs(x.Value - primaryStarMass) < _TOLERANCE);

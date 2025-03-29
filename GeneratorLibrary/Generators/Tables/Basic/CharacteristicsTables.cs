@@ -4,9 +4,8 @@ namespace GeneratorLibrary.Generators.Tables.Basic
 {
     public static class CharacteristicsTables
     {
-        public static double GenerateWorldDensity(WorldSize size, WorldSubType subType)
+        public static double GenerateWorldDensity(WorldSize size, WorldSubType subType, int roll)
         {
-            int roll = DiceRoller.Instance.Roll(3);
             double variation = Random.Shared.NextDouble() * 0.1 - 0.05;
 
             (double density, double minDensity, double maxDensity) = (size, subType) switch
@@ -64,7 +63,7 @@ namespace GeneratorLibrary.Generators.Tables.Basic
             _ => throw new ArgumentOutOfRangeException(nameof(roll), "Roll value is out of expected range.")
         };
 
-        public static double GenerateWorldDiameter(WorldSize size, double blackbodyTemperature, double density)
+        public static double GenerateWorldDiameter(WorldSize size, double blackbodyTemperature, double density, int roll)
         {
             // Obtener los valores de la tabla de restricciones de tamaño
             (double minSize, double maxSize) = size switch
@@ -82,7 +81,7 @@ namespace GeneratorLibrary.Generators.Tables.Basic
             double maxDiameter = factor * maxSize;
 
             // Calcular un diámetro aleatorio dentro del rango
-            double rollFactor = DiceRoller.Instance.Roll(2, -2) * (0.1 * (maxDiameter - minDiameter));
+            double rollFactor = roll * (0.1 * (maxDiameter - minDiameter));
             double diameter = minDiameter + rollFactor;
 
             // Aplicar variación aleatoria de ±5% del rango permitido

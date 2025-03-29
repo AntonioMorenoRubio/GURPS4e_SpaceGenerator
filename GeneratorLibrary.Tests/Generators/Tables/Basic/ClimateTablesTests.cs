@@ -1,45 +1,83 @@
 ﻿using GeneratorLibrary.Generators.Tables.Basic;
 using GeneratorLibrary.Models.Basic;
+using GeneratorLibrary.Tests.Utils;
+using GeneratorLibrary.Utils;
+using Moq;
 
 namespace GeneratorLibrary.Tests.Generators.Tables.Basic
 {
     public class ClimateTablesTests
     {
+        #region TestData
+        public static IEnumerable<object[]> SurfaceTemperatureRangeManualData => new List<object[]>()
+        {
+        new object[] { WorldSize.Special, WorldSubType.AsteroidBelt, 140d, 500d},
+        new object[] { WorldSize.Tiny, WorldSubType.Ice, 80d, 140d},
+        new object[] { WorldSize.Tiny, WorldSubType.Sulfur, 80d, 140d},
+        new object[] { WorldSize.Tiny, WorldSubType.Rock, 140d, 500d},
+        new object[] { WorldSize.Small, WorldSubType.Hadean, 50d, 80d},
+        new object[] { WorldSize.Small, WorldSubType.Ice, 80d, 140d},
+        new object[] { WorldSize.Small, WorldSubType.Rock, 140d, 500d},
+        new object[] { WorldSize.Standard, WorldSubType.Hadean, 50d, 80d},
+        new object[] { WorldSize.Standard, WorldSubType.Ammonia, 140d, 215d},
+        new object[] { WorldSize.Standard, WorldSubType.Ice, 80d, 230d},
+        new object[] { WorldSize.Standard, WorldSubType.Ocean, 250d, 340d},
+        new object[] { WorldSize.Standard, WorldSubType.Garden, 250d, 340d},
+        new object[] { WorldSize.Standard, WorldSubType.Greenhouse, 500d, 950d},
+        new object[] { WorldSize.Standard, WorldSubType.Chthonian, 500d, 950d},
+        new object[] { WorldSize.Large, WorldSubType.Ammonia, 140d, 215d},
+        new object[] { WorldSize.Large, WorldSubType.Ice, 80d, 230d},
+        new object[] { WorldSize.Large, WorldSubType.Ocean, 250d, 340d},
+        new object[] { WorldSize.Large, WorldSubType.Garden, 250d, 340d},
+        new object[] { WorldSize.Large, WorldSubType.Greenhouse, 500d, 950d},
+        new object[] { WorldSize.Large, WorldSubType.Chthonian, 500d, 950d},
+        new object[] { WorldSize.Special, WorldSubType.AsteroidBelt, 140d, 500d},
+        new object[] { WorldSize.Tiny, WorldSubType.Ice, 80d, 140d},
+        new object[] { WorldSize.Tiny, WorldSubType.Sulfur, 80d, 140d},
+        new object[] { WorldSize.Tiny, WorldSubType.Rock, 140d, 500d},
+        new object[] { WorldSize.Small, WorldSubType.Hadean, 50d, 80d},
+        new object[] { WorldSize.Small, WorldSubType.Ice, 80d, 140d},
+        new object[] { WorldSize.Small, WorldSubType.Rock, 140d, 500d},
+        new object[] { WorldSize.Standard, WorldSubType.Hadean, 50d, 80d},
+        new object[] { WorldSize.Standard, WorldSubType.Ammonia, 140d, 215d},
+        new object[] { WorldSize.Standard, WorldSubType.Ice, 80d, 230d},
+        new object[] { WorldSize.Standard, WorldSubType.Ocean, 250d, 340d},
+        new object[] { WorldSize.Standard, WorldSubType.Garden, 250d, 340d},
+        new object[] { WorldSize.Standard, WorldSubType.Greenhouse, 500d, 950d},
+        new object[] { WorldSize.Standard, WorldSubType.Chthonian, 500d, 950d},
+        new object[] { WorldSize.Large, WorldSubType.Ammonia, 140d, 215d},
+        new object[] { WorldSize.Large, WorldSubType.Ice, 80d, 230d},
+        new object[] { WorldSize.Large, WorldSubType.Ocean, 250d, 340d},
+        new object[] { WorldSize.Large, WorldSubType.Garden, 250d, 340d},
+        new object[] { WorldSize.Large, WorldSubType.Chthonian, 500d, 950d},
+        new object[] { WorldSize.Large, WorldSubType.Greenhouse, 500d, 950d}
+        };
+
+        public static IEnumerable<object[]> SurfaceTemperatureRangeTestData()
+        {
+            foreach (var entry in SurfaceTemperatureRangeManualData)
+                foreach (var diceroll in DiceRollerTests.AllTestDiceRolls())
+                    yield return entry.Append(diceroll[0]).ToArray();
+        }
+        #endregion
+
         [Theory]
-        [InlineData(WorldSize.Special, WorldSubType.AsteroidBelt, 140d, 500d)]
-        [InlineData(WorldSize.Tiny, WorldSubType.Ice, 80d, 140d)]
-        [InlineData(WorldSize.Tiny, WorldSubType.Sulfur, 80d, 140d)]
-        [InlineData(WorldSize.Tiny, WorldSubType.Rock, 140d, 500d)]
-        [InlineData(WorldSize.Small, WorldSubType.Hadean, 50d, 80d)]
-        [InlineData(WorldSize.Small, WorldSubType.Ice, 80d, 140d)]
-        [InlineData(WorldSize.Small, WorldSubType.Rock, 140d, 500d)]
-        [InlineData(WorldSize.Standard, WorldSubType.Hadean, 50d, 80d)]
-        [InlineData(WorldSize.Standard, WorldSubType.Ammonia, 140d, 215d)]
-        [InlineData(WorldSize.Standard, WorldSubType.Ice, 80d, 230d)]
-        [InlineData(WorldSize.Standard, WorldSubType.Ocean, 250d, 340d)]
-        [InlineData(WorldSize.Standard, WorldSubType.Garden, 250d, 340d)]
-        [InlineData(WorldSize.Standard, WorldSubType.Greenhouse, 500d, 950d)]
-        [InlineData(WorldSize.Standard, WorldSubType.Chthonian, 500d, 950d)]
-        [InlineData(WorldSize.Large, WorldSubType.Ammonia, 140d, 215d)]
-        [InlineData(WorldSize.Large, WorldSubType.Ice, 80d, 230d)]
-        [InlineData(WorldSize.Large, WorldSubType.Ocean, 250d, 340d)]
-        [InlineData(WorldSize.Large, WorldSubType.Garden, 250d, 340d)]
-        [InlineData(WorldSize.Large, WorldSubType.Greenhouse, 500d, 950d)]
-        [InlineData(WorldSize.Large, WorldSubType.Chthonian, 500d, 950d)]
-        public void GenerateAverageSurfaceTemperatureInKelvinsByWorldType_ShouldReturnValidRange(WorldSize size, WorldSubType subType, double minExpected, double maxExpected)
+        [MemberData(nameof(SurfaceTemperatureRangeTestData))]
+        public void GenerateAverageSurfaceTemperatureInKelvinsByWorldType_ShouldReturnValidRange(WorldSize size, WorldSubType subType, double minExpected, double maxExpected, int roll)
         {
             // Act
-            double result = ClimateTables.GenerateAverageSurfaceTemperatureInKelvinsByWorldType(size, subType);
+            double result = ClimateTables.GenerateAverageSurfaceTemperatureInKelvinsByWorldType(size, subType, roll);
 
             // Assert
             Assert.InRange(result, minExpected, maxExpected);
         }
 
-        [Fact]
-        public void GenerateAverageSurfaceTemperatureInKelvinsByWorldType_GasGiant_ShouldThrowException()
+        [Theory]
+        [MemberData(nameof(WorldTypeTablesTests.GasGiantWithRollsTestData), MemberType = typeof(WorldTypeTablesTests))]
+        public void GenerateAverageSurfaceTemperatureInKelvinsByWorldType_GasGiant_ShouldThrowException(WorldSize size, WorldSubType subType, int roll)
         {
             // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => ClimateTables.GenerateAverageSurfaceTemperatureInKelvinsByWorldType(WorldSize.Special, WorldSubType.GasGiant));
+            Assert.Throws<ArgumentOutOfRangeException>(() => ClimateTables.GenerateAverageSurfaceTemperatureInKelvinsByWorldType(size, subType, roll));
         }
 
         [Theory]
