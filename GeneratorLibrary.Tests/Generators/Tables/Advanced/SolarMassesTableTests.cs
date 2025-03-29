@@ -1,4 +1,6 @@
 ﻿using GeneratorLibrary.Generators.Tables.Advanced;
+using GeneratorLibrary.Utils;
+using Moq;
 
 namespace GeneratorLibrary.Tests.Generators.Tables.Advanced
 {
@@ -133,6 +135,56 @@ namespace GeneratorLibrary.Tests.Generators.Tables.Advanced
         public void GetPrimaryStarMass_ShouldThrow_KeyNotFoundException(int roll1, int roll2)
         {
             Assert.Throws<KeyNotFoundException>(() => SolarMassesTable.GetPrimaryStarMass(roll1, roll2));
+        }
+
+        [Fact]
+        public void GetCompanionStarMass_ReturnsSame_WhenStepRollIsZero()
+        {
+            //Arrange
+            Mock<IDiceRoller> mockDiceRoller = new Mock<IDiceRoller>();
+            mockDiceRoller.Setup(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>())).Returns(0);
+            IDiceRoller diceRoller = mockDiceRoller.Object;
+
+            //Act
+            double primaryMass = SolarMassesTable.GetPrimaryStarMass(5, 5);
+            double companionMass = SolarMassesTable.GetCompanionStarMass(primaryMass, diceRoller);
+
+            //Assert
+            Assert.Equal(primaryMass, companionMass);
+            mockDiceRoller.Verify(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>()), Times.Once);
+        }
+
+        [Fact]
+        public void GetCompanionStarMass_ReturnsMinimum_WhenPrimaryMassIsMinimum()
+        {
+            //Arrange
+            Mock<IDiceRoller> mockDiceRoller = new Mock<IDiceRoller>();
+            mockDiceRoller.Setup(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>())).Returns(3);
+            IDiceRoller diceRoller = mockDiceRoller.Object;
+            double primaryMass = 0.10;
+
+            //Act
+            double companionMass = SolarMassesTable.GetCompanionStarMass(primaryMass, diceRoller);
+
+            Assert.Equal(0.10, companionMass);
+            mockDiceRoller.Verify(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>()), Times.Never);
+        }
+
+        [Fact]
+        public void GetCompanionStarMass_Decreases_WhenStepRollIsPositive()
+        {
+            //Arrange
+            Mock<IDiceRoller> mockDiceRoller = new Mock<IDiceRoller>();
+            mockDiceRoller.Setup(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>())).Returns(1);
+            IDiceRoller diceRoller = mockDiceRoller.Object;
+            double primaryMass = SolarMassesTable.GetPrimaryStarMass(6, 5);
+
+            //Act
+            double companionMass = SolarMassesTable.GetCompanionStarMass(primaryMass, diceRoller);
+
+            //Assert
+            Assert.True(companionMass < primaryMass);
+            mockDiceRoller.Verify(d => d.Roll(It.IsAny<int>(), It.IsAny<int[]>()), Times.AtLeastOnce);
         }
     }
 }
