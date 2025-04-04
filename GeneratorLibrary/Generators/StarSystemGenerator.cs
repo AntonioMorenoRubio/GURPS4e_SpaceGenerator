@@ -6,8 +6,8 @@ namespace GeneratorLibrary.Generators
 {
     public class StarSystemGenerator
     {
-        private readonly DiceRoller _diceRoller = new();
         private readonly bool mustHaveGardenWorld;
+        private readonly DiceRoller _diceRoller = new();
 
         public StarSystemGenerator() { }
         public StarSystemGenerator(int seed)
@@ -49,6 +49,55 @@ namespace GeneratorLibrary.Generators
             (StellarAgePopulationType type, double age) = StellarAgeTable.DetermineStellarAge(_diceRoller, mustHaveGardenWorld);
             starSystem.StellarAge.Type = type;
             starSystem.StellarAge.Age = age;
+
+            //STEP 18: Stellar Characteristics (S102-104)
+            foreach (var star in starSystem.Stars)
+            {
+                StellarEvolutionData data = StellarCharacteristicsTables.GetStellarData(star.Mass);
+
+                double maxAgeBeforeWhiteDwarf = data.MainSequenceSpan ?? double.MaxValue;
+                double maxAgeAsSubgiant = data.MainSequenceSpan ?? double.MaxValue;
+
+                if (data.SubGiantSpan.HasValue)
+                {
+                    maxAgeBeforeWhiteDwarf += data.SubGiantSpan.Value;
+                    maxAgeAsSubgiant += data.SubGiantSpan.Value;
+                }
+
+                if (data.GiantSpan.HasValue)
+                    maxAgeBeforeWhiteDwarf += data.GiantSpan.Value;
+
+                bool isWhiteDwarf = starSystem.StellarAge.Age > maxAgeBeforeWhiteDwarf;
+                bool isGiant = starSystem.StellarAge.Age > maxAgeAsSubgiant;
+                bool isSubgiant = starSystem.StellarAge.Age > data.MainSequenceSpan;
+
+                star.Type = StellarCharacteristicsTables.DetermineStarType(star.Mass);
+                star.LuminosityClass = StellarCharacteristicsTables.DetermineLuminosityClass(star.Mass, starSystem.StellarAge.Age);
+
+                if (isWhiteDwarf)
+                {
+                    star.Mass = StellarCharacteristicsTables.WhiteDwarfMass(_diceRoller);
+                    star.Temperature = StellarCharacteristicsTables.WhiteDwarfTemperature(star.Mass);
+                    star.Luminosity = StellarCharacteristicsTables.WhiteDwarfLuminosity;
+
+                }
+                else if (isGiant)
+                {
+                    star.Temperature = StellarCharacteristicsTables.CalculateGiantTemperature(_diceRoller);
+                    star.Luminosity = StellarCharacteristicsTables.CalculateGiantLuminosity(star.Mass);
+                }
+                else if (isSubgiant)
+                {
+                    star.Temperature = StellarCharacteristicsTables.CalculateSubGiantTemperature(star.Mass, starSystem.StellarAge.Age);
+                    star.Luminosity = StellarCharacteristicsTables.CalculateSubGiantLuminosity(star.Mass);
+                }
+                else
+                {
+                    star.Temperature = StellarCharacteristicsTables.CalculateMainSequenceTemperature(star.Mass);
+                    star.Luminosity = StellarCharacteristicsTables.CalculateMainSequenceLuminosity(star.Mass, starSystem.StellarAge.Age);
+                }
+                star.Radius_AU = StellarCharacteristicsTables.DetermineStarRadiusInAu(star.LuminosityClass, star.Luminosity, star.Temperature);
+            }
 
             return starSystem;
         }
